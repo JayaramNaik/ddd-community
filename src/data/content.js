@@ -32,6 +32,15 @@ export const MENTORS = [
     gradientFrom: "#10b981",
     gradientTo: "#2dd4bf",
   },
+  {
+    name: "Bhargav V Naik",
+    college: "PUC (Science)",
+    institution: "",
+    interests: ["History", "Geography", "Travelling", "Volleyball"],
+    emoji: "🌍",
+    gradientFrom: "#f59e0b",
+    gradientTo: "#ef4444",
+  },
 ];
 
 export const GUIDANCE_AREAS = [

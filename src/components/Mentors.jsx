@@ -36,8 +36,16 @@ export default function Mentors({ dark }) {
 
                 <div style={{ padding: "32px 28px" }}>
                   {/* Avatar */}
-                  <div style={{ width: 72, height: 72, borderRadius: "50%", background: "linear-gradient(135deg,rgba(56,189,248,0.2),rgba(129,140,248,0.2))", border: "2px solid rgba(56,189,248,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36, marginBottom: 20 }}>
-                    {mentor.emoji}
+                  <div style={{ width: 72, height: 72, borderRadius: "50%", overflow: "hidden", background: "linear-gradient(135deg,rgba(56,189,248,0.2),rgba(129,140,248,0.2))", border: "2px solid rgba(56,189,248,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36, marginBottom: 20 }}>
+                    {mentor.imageUrl ? (
+                      <img
+                        src={mentor.imageUrl}
+                        alt={mentor.name}
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      />
+                    ) : (
+                      <span>{mentor.emoji}</span>
+                    )}
                   </div>
 
                   <h3 style={{ fontFamily: "'Playfair Display',serif", fontWeight: 700, fontSize: 22, color: dark ? "#f1f5f9" : "#0f172a", marginBottom: 6 }}>
