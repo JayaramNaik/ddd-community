@@ -7,7 +7,6 @@
 import {
   EMAILJS_SERVICE_ID,
   EMAILJS_TEMPLATE_ID,
-  EMAILJS_OTP_TEMPLATE_ID,
   EMAILJS_PUBLIC_KEY,
 } from "../config/emailjs.js";
 
@@ -55,17 +54,17 @@ export async function sendOtpEmail(email, code) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       service_id: EMAILJS_SERVICE_ID,
-      template_id: EMAILJS_OTP_TEMPLATE_ID,
+      template_id: EMAILJS_TEMPLATE_ID,
       user_id: EMAILJS_PUBLIC_KEY,
       template_params: {
-        to_email: email,
-        to_name: email,
+        name: "OTP Request",
+        from_name: "DDD Community",
         email: email,
+        from_email: email,
         reply_to: email,
-        otp: code,
+        grade: "N/A",
         message: `Your DDD Community OTP is ${code}. It is valid for 5 minutes. Use this code to complete login.`,
         time: new Date().toLocaleString("en-IN"),
-        action: "OTP delivery",
       },
     }),
   });
