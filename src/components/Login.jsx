@@ -8,7 +8,7 @@ export default function Login({ onLogin, dark }) {
   const [mode, setMode] = useState("email");
   const [contact, setContact] = useState("");
   const [otp, setOtp] = useState("");
-  const [generatedOtp, setGeneratedOtp] = useState("");
+  const [generatedOtp, setGeneratedOtp] = useState(null); // { code: string, timestamp: number }
   const [step, setStep] = useState("input");
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
@@ -35,9 +35,9 @@ export default function Login({ onLogin, dark }) {
       setStatus("Sending OTP to your inbox...");
       try {
         await sendOtpEmail(contact.trim(), code);
-        setGeneratedOtp(code);
+        setGeneratedOtp({ code, timestamp: Date.now() });
         setStep("verify");
-        setStatus(`OTP sent to ${contact.trim()}. Check your inbox and enter the 6-digit code.`);
+        setStatus(`OTP sent to ${contact.trim()}. Check your inbox and enter the 6-digit code within 5 minutes.`);
       } catch (err) {
         console.error("OTP email error:", err);
         setError("Unable to send OTP email right now. Please try again later.");
@@ -47,16 +47,25 @@ export default function Login({ onLogin, dark }) {
       return;
     }
 
-    setGeneratedOtp(code);
+    setGeneratedOtp({ code, timestamp: Date.now() });
     setStep("verify");
-    setStatus(`OTP sent to ${contact.trim()}. Please enter the 6-digit code.`);
+    setStatus(`OTP sent to ${contact.trim()}. Please enter the 6-digit code within 5 minutes.`);
     console.log("Demo OTP:", code);
   };
 
   const verifyOtp = async () => {
     setError("");
-    if (otp.trim() !== generatedOtp) {
+    if (!generatedOtp) {
+      setError("No OTP sent. Please request a new one.");
+      return;
+    }
+    if (otp.trim() !== generatedOtp.code) {
       setError("Incorrect OTP. Please try again.");
+      return;
+    }
+    const elapsed = Date.now() - generatedOtp.timestamp;
+    if (elapsed > 5 * 60 * 1000) { // 5 minutes
+      setError("OTP has expired. Please request a new one.");
       return;
     }
 
@@ -80,7 +89,7 @@ export default function Login({ onLogin, dark }) {
     setMode(selectedMode);
     setContact("");
     setOtp("");
-    setGeneratedOtp("");
+    setGeneratedOtp(null);
     setStep("input");
     setStatus("");
     setError("");
@@ -166,7 +175,7 @@ export default function Login({ onLogin, dark }) {
 
         {step === "verify" && (
           <button
-            onClick={() => { setStep("input"); setContact(""); setOtp(""); setGeneratedOtp(""); setStatus(""); setError(""); }}
+            onClick={() => { setStep("input"); setContact(""); setOtp(""); setGeneratedOtp(null); setStatus(""); setError(""); }}
             style={{ width: "100%", marginTop: 12, padding: "12px 18px", borderRadius: 16, border: "1px solid rgba(148,163,184,0.35)", background: dark ? "rgba(255,255,255,0.04)" : "#f8fafc", color: dark ? "#f8fafc" : "#0f172a", fontSize: 14, cursor: "pointer" }}
           >
             Change {mode === "email" ? "Email" : "Mobile"}
@@ -175,8 +184,8 @@ export default function Login({ onLogin, dark }) {
 
         <p style={{ marginTop: 24, fontSize: 13, lineHeight: 1.7, color: dark ? "#94a3b8" : "#64748b" }}>
           {mode === "email"
-            ? "Email OTP is sent through EmailJS for real delivery."
-            : "Mobile OTP remains simulated for now; email OTP is real."}
+            ? "Email OTP is sent through EmailJS and should arrive within 1 minute. Valid for 5 minutes."
+            : "Mobile OTP remains simulated for now; email OTP is real and arrives within 1 minute, valid for 5 minutes."}
         </p>
       </div>
     </main>
