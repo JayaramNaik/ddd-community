@@ -5,7 +5,7 @@
 import { useState, useEffect } from "react";
 import { NAV_LINKS, WHATSAPP_LINK } from "../data/content.js";
 
-export default function Navbar({ dark, setDark }) {
+export default function Navbar({ dark, setDark, user, visitorCount, onLogout }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -53,15 +53,27 @@ export default function Navbar({ dark, setDark }) {
             {dark ? "☀️" : "🌙"}
           </button>
 
-          {/* Join CTA */}
-          <a
-            href={WHATSAPP_LINK}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ background: "linear-gradient(135deg,#38bdf8,#818cf8)", color: "#fff", padding: "8px 20px", borderRadius: 20, fontSize: 14, fontWeight: 600, textDecoration: "none", fontFamily: "'Syne', sans-serif" }}
-          >
-            Join Now
-          </a>
+          {user ? (
+            <>
+              <span style={{ color: dark ? "#cbd5e1" : "#475569", fontSize: 13, padding: "8px 14px", borderRadius: 18, border: "1px solid rgba(56,189,248,0.18)", fontFamily: "'Syne',sans-serif" }}>
+                Visitors: {visitorCount}
+              </span>
+              <button
+                onClick={onLogout}
+                style={{ background: "transparent", border: "1px solid rgba(56,189,248,0.35)", color: dark ? "#f8fafc" : "#0f172a", padding: "8px 20px", borderRadius: 20, fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "'Syne', sans-serif" }}
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <a
+              href="#"
+              onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              style={{ background: "linear-gradient(135deg,#38bdf8,#818cf8)", color: "#fff", padding: "8px 20px", borderRadius: 20, fontSize: 14, fontWeight: 600, textDecoration: "none", fontFamily: "'Syne', sans-serif" }}
+            >
+              Login
+            </a>
+          )}
         </div>
 
         {/* Hamburger (mobile) */}

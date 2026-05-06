@@ -7,6 +7,7 @@
 import { useState, useEffect } from "react";
 
 import Navbar       from "./components/Navbar.jsx";
+import Login        from "./components/Login.jsx";
 import Hero         from "./components/Hero.jsx";
 import About        from "./components/About.jsx";
 import Mentors      from "./components/Mentors.jsx";
@@ -20,6 +21,28 @@ import Footer       from "./components/Footer.jsx";
 
 export default function App() {
   const [dark, setDark] = useState(true);
+  const [user, setUser] = useState(() => {
+    try {
+      return JSON.parse(sessionStorage.getItem("ddd-user"));
+    } catch {
+      return null;
+    }
+  });
+  const [visitorLog, setVisitorLog] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("ddd-visitor-log")) || [];
+    } catch {
+      return [];
+    }
+  });
+
+  const visitorCount = visitorLog.length;
+
+  const recordVisitor = visitor => {
+    const next = [...visitorLog, visitor];
+    setVisitorLog(next);
+    localStorage.setItem("ddd-visitor-log", JSON.stringify(next));
+  };
 
   // Apply dark/light background to body
   useEffect(() => {
@@ -36,9 +59,21 @@ export default function App() {
     document.head.appendChild(link);
   }, []);
 
+  useEffect(() => {
+    if (user) {
+      sessionStorage.setItem("ddd-user", JSON.stringify(user));
+    } else {
+      sessionStorage.removeItem("ddd-user");
+    }
+  }, [user]);
+
+  if (!user) {
+    return <Login onLogin={visitor => { recordVisitor(visitor); setUser(visitor); }} dark={dark} />;
+  }
+
   return (
     <div style={{ fontFamily: "'Syne', sans-serif", scrollBehavior: "smooth" }}>
-      <Navbar       dark={dark} setDark={setDark} />
+      <Navbar dark={dark} setDark={setDark} user={user} visitorCount={visitorCount} onLogout={() => setUser(null)} />
       <Hero         dark={dark} />
       <About        dark={dark} />
       <Mentors      dark={dark} />
