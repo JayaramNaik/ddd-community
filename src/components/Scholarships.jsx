@@ -3,7 +3,7 @@
 //  To add/edit scholarships → update src/data/content.js (SCHOLARSHIPS)
 // ─────────────────────────────────────────────────────────────
 
-import { FadeIn } from "../hooks/useInView.js";
+import { FadeIn } from "../hooks/useInView.jsx";
 import { SCHOLARSHIPS } from "../data/content.js";
 
 export default function Scholarships({ dark }) {

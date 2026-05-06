@@ -3,7 +3,7 @@
 //  To add/edit areas → update src/data/content.js (GUIDANCE_AREAS)
 // ─────────────────────────────────────────────────────────────
 
-import { FadeIn } from "../hooks/useInView.js";
+import { FadeIn } from "../hooks/useInView.jsx";
 import { GUIDANCE_AREAS } from "../data/content.js";
 
 export default function Guidance({ dark }) {

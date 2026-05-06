@@ -3,7 +3,7 @@
 // ─────────────────────────────────────────────────────────────
 
 import { useState } from "react";
-import { FadeIn } from "../hooks/useInView.js";
+import { FadeIn } from "../hooks/useInView.jsx";
 import { WHATSAPP_LINK } from "../data/content.js";
 
 const PARTICLE_COUNT = 30;

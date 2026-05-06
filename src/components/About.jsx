@@ -2,7 +2,7 @@
 //  src/components/About.jsx
 // ─────────────────────────────────────────────────────────────
 
-import { FadeIn } from "../hooks/useInView.js";
+import { FadeIn } from "../hooks/useInView.jsx";
 
 const VALUES = [
   { icon: "🎯", title: "Goal-Oriented",    desc: "Clear direction for every student's journey." },

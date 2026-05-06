@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 
 import { useState } from "react";
-import { FadeIn } from "../hooks/useInView.js";
+import { FadeIn } from "../hooks/useInView.jsx";
 import { FAQS } from "../data/content.js";
 
 export default function FAQ({ dark }) {

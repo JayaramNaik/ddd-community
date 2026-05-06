@@ -5,7 +5,7 @@
 // ─────────────────────────────────────────────────────────────
 
 import { useState, useEffect } from "react";
-import { FadeIn } from "../hooks/useInView.js";
+import { FadeIn } from "../hooks/useInView.jsx";
 import { COMMUNITY_TABS } from "../data/content.js";
 
 export default function Community({ dark }) {

@@ -3,7 +3,7 @@
 //  To add/edit mentors → update src/data/content.js (MENTORS)
 // ─────────────────────────────────────────────────────────────
 
-import { FadeIn } from "../hooks/useInView.js";
+import { FadeIn } from "../hooks/useInView.jsx";
 import { MENTORS } from "../data/content.js";
 
 export default function Mentors({ dark }) {

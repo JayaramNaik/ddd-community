@@ -2,7 +2,7 @@
 //  src/components/Guidelines.jsx
 // ─────────────────────────────────────────────────────────────
 
-import { FadeIn } from "../hooks/useInView.js";
+import { FadeIn } from "../hooks/useInView.jsx";
 
 const DOS   = [
   "Respectful and kind interaction at all times",
