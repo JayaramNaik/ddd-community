@@ -62,7 +62,7 @@ export async function sendOtpEmail(email, code) {
         email: email,
         reply_to: email,
         otp: code,
-        message: `Your DDD Community OTP is ${code}. Use this code to complete login.`,
+        message: `Your DDD Community OTP is ${code}. It is valid for 5 minutes. Use this code to complete login.`,
         time: new Date().toLocaleString("en-IN"),
         action: "OTP delivery",
       },
