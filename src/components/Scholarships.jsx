@@ -7,6 +7,12 @@ import { FadeIn } from "../hooks/useInView.jsx";
 import { SCHOLARSHIPS } from "../data/content.js";
 
 export default function Scholarships({ dark }) {
+  const handleScholarshipClick = (url) => {
+    if (url) {
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+  };
+
   return (
     <section id="scholarships" style={{ padding: "100px 2rem", background: dark ? "#040b1c" : "#fff" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
@@ -30,9 +36,26 @@ export default function Scholarships({ dark }) {
           {SCHOLARSHIPS.map((s, i) => (
             <FadeIn key={s.name} delay={i * 0.1}>
               <div
-                style={{ background: dark ? "rgba(255,255,255,0.04)" : "#f8fafc", border: `1.5px solid ${dark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.07)"}`, borderLeft: "4px solid #38bdf8", borderRadius: 16, padding: "24px 22px", transition: "all 0.3s" }}
-                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 16px 40px rgba(56,189,248,0.15)"; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; }}
+                onClick={() => handleScholarshipClick(s.url)}
+                style={{ 
+                  background: dark ? "rgba(255,255,255,0.04)" : "#f8fafc", 
+                  border: `1.5px solid ${dark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.07)"}`, 
+                  borderLeft: "4px solid #38bdf8", 
+                  borderRadius: 16, 
+                  padding: "24px 22px", 
+                  transition: "all 0.3s",
+                  cursor: s.url ? "pointer" : "default"
+                }}
+                onMouseEnter={e => { 
+                  if (s.url) {
+                    e.currentTarget.style.transform = "translateY(-4px)"; 
+                    e.currentTarget.style.boxShadow = "0 16px 40px rgba(56,189,248,0.15)";
+                  }
+                }}
+                onMouseLeave={e => { 
+                  e.currentTarget.style.transform = ""; 
+                  e.currentTarget.style.boxShadow = ""; 
+                }}
               >
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                   <h3 style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 16, color: dark ? "#f1f5f9" : "#0f172a", margin: 0 }}>

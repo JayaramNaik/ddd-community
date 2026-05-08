@@ -5,6 +5,7 @@
 // ─────────────────────────────────────────────────────────────
 
 import { useState, useEffect } from "react";
+import { RECEIVER_EMAIL } from "./config/emailjs.js";
 
 import Navbar       from "./components/Navbar.jsx";
 import Login        from "./components/Login.jsx";
@@ -35,8 +36,10 @@ export default function App() {
       return [];
     }
   });
+  const [showVisitors, setShowVisitors] = useState(false);
 
   const visitorCount = visitorLog.length;
+  const isHost = user && user.contact === RECEIVER_EMAIL;
 
   const recordVisitor = visitor => {
     const next = [...visitorLog, visitor];
@@ -73,7 +76,7 @@ export default function App() {
 
   return (
     <div style={{ fontFamily: "'Syne', sans-serif", scrollBehavior: "smooth" }}>
-      <Navbar dark={dark} setDark={setDark} user={user} visitorCount={visitorCount} onLogout={() => setUser(null)} />
+      <Navbar dark={dark} setDark={setDark} user={user} visitorCount={visitorCount} isHost={isHost} onLogout={() => setUser(null)} onShowVisitors={() => setShowVisitors(true)} />
       <Hero         dark={dark} />
       <About        dark={dark} />
       <Mentors      dark={dark} />
@@ -84,6 +87,57 @@ export default function App() {
       <FAQ          dark={dark} />
       <Contact      dark={dark} />
       <Footer />
+      {showVisitors && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000
+        }} onClick={() => setShowVisitors(false)}>
+          <div style={{
+            backgroundColor: dark ? '#1a1a1a' : 'white',
+            color: dark ? 'white' : 'black',
+            padding: '20px',
+            borderRadius: '8px',
+            maxWidth: '600px',
+            maxHeight: '80vh',
+            overflowY: 'auto',
+            width: '90%'
+          }} onClick={e => e.stopPropagation()}>
+            <h2>Visitor Log</h2>
+            <button onClick={() => setShowVisitors(false)} style={{
+              float: 'right',
+              background: 'none',
+              border: 'none',
+              fontSize: '20px',
+              cursor: 'pointer'
+            }}>×</button>
+            <div style={{ clear: 'both', marginTop: '20px' }}>
+              {visitorLog.length === 0 ? (
+                <p>No visitors yet.</p>
+              ) : (
+                visitorLog.map((visitor, index) => (
+                  <div key={index} style={{
+                    border: `1px solid ${dark ? '#333' : '#ddd'}`,
+                    padding: '10px',
+                    marginBottom: '10px',
+                    borderRadius: '4px'
+                  }}>
+                    <strong>{visitor.displayName}</strong> ({visitor.contact})<br />
+                    <small>Method: {visitor.method} | Time: {new Date(visitor.time).toLocaleString()}</small>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

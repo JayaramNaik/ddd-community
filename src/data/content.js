@@ -53,12 +53,12 @@ export const GUIDANCE_AREAS = [
 ];
 
 export const SCHOLARSHIPS = [
-  { name: "NSP Scholarship",        desc: "National Scholarship Portal — Central Govt scholarships for minority, OBC, SC/ST students.", badge: "Central Govt" },
-  { name: "SSP Scholarship",        desc: "State Scholarship Portal — Karnataka state-level scholarships for eligible students.",        badge: "State Govt"  },
-  { name: "Vidyadhan",              desc: "Merit-cum-need based scholarship supporting students from economically weaker sections.",      badge: "Foundation"  },
-  { name: "Foundation Scholarships",desc: "Private foundations offering merit & need-based scholarships for ambitious students.",        badge: "Private"     },
-  { name: "Vidyaposhak",            desc: "Scholarship for students who have excelled in competitive exams, rewarding academic talent.", badge: "Competitive" },
-  { name: "More Coming Soon ✨",    desc: "We are constantly curating new scholarships. Stay tuned for regular updates!",               badge: "Soon"        },
+  { name: "NSP Scholarship",        desc: "National Scholarship Portal — Central Govt scholarships for minority, OBC, SC/ST students.", badge: "Central Govt", url: "https://scholarships.gov.in/" },
+  { name: "SSP Scholarship",        desc: "State Scholarship Portal — Karnataka state-level scholarships for eligible students.",        badge: "State Govt",   url: "https://scholarships.karnataka.gov.in/" },
+  { name: "Vidyadhan",              desc: "Merit-cum-need based scholarship supporting students from economically weaker sections.",      badge: "Foundation",   url: "https://www.vidyadhan.org/" },
+  { name: "Foundation Scholarships",desc: "Private foundations offering merit & need-based scholarships for ambitious students.",        badge: "Private",      url: "https://www.vedantascholarships.com/" },
+  { name: "Vidyaposhak",            desc: "Scholarship for students who have excelled in competitive exams, rewarding academic talent.", badge: "Competitive",  url: "https://scholarships.gov.in/" },
+  { name: "More Coming Soon ✨",    desc: "We are constantly curating new scholarships. Stay tuned for regular updates!",               badge: "Soon",         url: null },
 ];
 
 export const FAQS = [

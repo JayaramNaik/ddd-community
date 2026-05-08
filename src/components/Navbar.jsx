@@ -5,7 +5,7 @@
 import { useState, useEffect } from "react";
 import { NAV_LINKS, WHATSAPP_LINK } from "../data/content.js";
 
-export default function Navbar({ dark, setDark, user, visitorCount, onLogout }) {
+export default function Navbar({ dark, setDark, user, visitorCount, isHost, onLogout, onShowVisitors }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -55,9 +55,19 @@ export default function Navbar({ dark, setDark, user, visitorCount, onLogout }) 
 
           {user ? (
             <>
-              <span style={{ color: dark ? "#cbd5e1" : "#475569", fontSize: 13, padding: "8px 14px", borderRadius: 18, border: "1px solid rgba(56,189,248,0.18)", fontFamily: "'Syne',sans-serif" }}>
-                Visitors: {visitorCount}
-              </span>
+              {isHost && (
+                <>
+                  <span style={{ color: dark ? "#cbd5e1" : "#475569", fontSize: 13, padding: "8px 14px", borderRadius: 18, border: "1px solid rgba(56,189,248,0.18)", fontFamily: "'Syne',sans-serif" }}>
+                    Visitors: {visitorCount}
+                  </span>
+                  <button
+                    onClick={onShowVisitors}
+                    style={{ background: "transparent", border: "1px solid rgba(56,189,248,0.35)", color: dark ? "#f8fafc" : "#0f172a", padding: "8px 20px", borderRadius: 20, fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "'Syne', sans-serif" }}
+                  >
+                    View Visitors
+                  </button>
+                </>
+              )}
               <button
                 onClick={onLogout}
                 style={{ background: "transparent", border: "1px solid rgba(56,189,248,0.35)", color: dark ? "#f8fafc" : "#0f172a", padding: "8px 20px", borderRadius: 20, fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "'Syne', sans-serif" }}
