@@ -1,4 +1,4 @@
-import{r as b,j as i,F as t}from"./index-Ch2Ufvg2.js";const T=`
+import{r as b,j as i,F as t}from"./index-DAB1CKSp.js";const T=`
   .ep-stats        { display: flex; justify-content: center; gap: 28px; flex-wrap: wrap; }
   .ep-stat-val     { font-family: 'Playfair Display', serif; font-weight: 900;
                      font-size: clamp(1.4rem, 4vw, 1.8rem);
