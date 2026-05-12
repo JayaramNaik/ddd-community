@@ -4,9 +4,11 @@
 // ─────────────────────────────────────────────────────────────
 
 import { FadeIn } from "../hooks/useInView.jsx";
+import { useTranslation } from "../data/translations.js";
 import { SCHOLARSHIPS } from "../data/content.js";
 
-export default function Scholarships({ dark }) {
+export default function Scholarships({ dark, lang }) {
+  const t = useTranslation(lang);
   const handleScholarshipClick = (url) => {
     if (url) {
       window.open(url, "_blank", "noopener,noreferrer");
@@ -23,11 +25,11 @@ export default function Scholarships({ dark }) {
               FINANCIAL SUPPORT
             </div>
             <h2 style={{ fontSize: "clamp(2rem,4vw,3rem)", fontFamily: "'Playfair Display',serif", fontWeight: 900, color: dark ? "#f1f5f9" : "#0f172a" }}>
-              Scholarship{" "}
-              <span style={{ background: "linear-gradient(135deg,#38bdf8,#818cf8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Awareness</span>
+              {t.scholarships.title}{" "}
+              <span style={{ background: "linear-gradient(135deg,#38bdf8,#818cf8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{t.scholarships.highlight}</span>
             </h2>
             <p style={{ color: dark ? "#64748b" : "#64748b", marginTop: 12, fontFamily: "'Lora',serif" }}>
-              Don't let finances hold back your dreams.
+              {t.scholarships.subtitle}
             </p>
           </div>
         </FadeIn>

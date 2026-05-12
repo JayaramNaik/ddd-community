@@ -3,6 +3,7 @@
 // ─────────────────────────────────────────────────────────────
 
 import { FadeIn } from "../hooks/useInView.jsx";
+import { useTranslation } from "../data/translations.js";
 
 const VALUES = [
   { icon: "🎯", title: "Goal-Oriented",    desc: "Clear direction for every student's journey." },
@@ -11,7 +12,8 @@ const VALUES = [
   { icon: "🤝", title: "Community Support",desc: "Never walk alone — we grow together." },
 ];
 
-export default function About({ dark }) {
+export default function About({ dark, lang }) {
+  const t = useTranslation(lang);
   const card = {
     background:   dark ? "rgba(255,255,255,0.04)" : "#fff",
     border:       `1px solid ${dark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.07)"}`,
@@ -30,12 +32,11 @@ export default function About({ dark }) {
               ABOUT THE INITIATIVE
             </div>
             <h2 style={{ fontSize: "clamp(2rem,4vw,3rem)", fontFamily: "'Playfair Display',serif", fontWeight: 900, color: dark ? "#f1f5f9" : "#0f172a", marginBottom: 24, lineHeight: 1.2 }}>
-              Seniors Guiding{" "}
-              <span style={{ background: "linear-gradient(135deg,#38bdf8,#818cf8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Juniors</span>{" "}
-              Forward
+              {t.about.title}{" "}
+              <span style={{ background: "linear-gradient(135deg,#38bdf8,#818cf8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{t.about.highlight}</span>
             </h2>
             <p style={{ color: dark ? "#94a3b8" : "#475569", lineHeight: 1.8, fontSize: 16, marginBottom: 20, fontFamily: "'Lora',serif" }}>
-              This initiative is started by seniors to support juniors with guidance, awareness, mentorship, and opportunities. We believe every student deserves clarity about their future.
+              {t.about.desc}
             </p>
             <div style={{ background: dark ? "rgba(56,189,248,0.08)" : "rgba(56,189,248,0.08)", border: "1px solid rgba(56,189,248,0.25)", borderRadius: 16, padding: "20px 24px", fontFamily: "'Lora',serif", fontStyle: "italic", fontSize: 17, color: dark ? "#e2e8f0" : "#1e293b", lineHeight: 1.6 }}>
               ✨ "Small guidance today can create big success tomorrow."

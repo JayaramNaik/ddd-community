@@ -3,6 +3,7 @@
 // ─────────────────────────────────────────────────────────────
 
 import { WHATSAPP_LINK } from "../data/content.js";
+import { useTranslation } from "../data/translations.js";
 
 const FOOTER_LINKS = [
   { heading: "Explore",    links: ["About Us", "Mentors", "Guidance Areas", "Scholarships"] },
@@ -10,7 +11,8 @@ const FOOTER_LINKS = [
   { heading: "Connect",    links: ["Instagram", "WhatsApp Community", "Telegram", "Email Us"] },
 ];
 
-export default function Footer() {
+export default function Footer({ lang }) {
+  const t = useTranslation(lang);
   return (
     <footer style={{ background: "#020810", padding: "60px 2rem 32px", color: "#fff" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
@@ -23,7 +25,7 @@ export default function Footer() {
               D • D • D
             </div>
             <p style={{ fontSize: 13, color: "#64748b", lineHeight: 1.7, fontFamily: "'Lora',serif" }}>
-              Dream. Decide. Dominate. A student mentorship community building brighter futures.
+              {t.footer.desc}
             </p>
             <a
               href={WHATSAPP_LINK}
@@ -58,10 +60,10 @@ export default function Footer() {
         {/* Bottom bar */}
         <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: 28, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
           <div style={{ fontFamily: "'Playfair Display',serif", fontStyle: "italic", fontSize: 16, color: "#475569" }}>
-            "Dream. Decide. Dominate."
+            `"${t.footer.tagline}"`
           </div>
           <div style={{ fontSize: 12, color: "#334155", fontFamily: "'Syne',sans-serif" }}>
-            © 2025 Dream • Decide • Dominate. Made with ❤️ for students.
+            {`© 2025 ${t.footer.tagline}. ${t.footer.rights}`}
           </div>
         </div>
 

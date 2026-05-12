@@ -6,13 +6,15 @@
 // ─────────────────────────────────────────────────────────────
 
 import { useState } from "react";
+import { useTranslation } from "../data/translations.js";
 import { FadeIn } from "../hooks/useInView.jsx";
 import { sendJoinEmail } from "../utils/sendEmail.js";
 import { WHATSAPP_LINK } from "../data/content.js";
 
 const GRADE_OPTIONS = ["10th Student", "10th Passout", "PUC Student", "PUC Passout", "Degree Student", "Other"];
 
-export default function Contact({ dark }) {
+export default function Contact({ dark, lang }) {
+  const t = useTranslation(lang);
   const [form, setForm]     = useState({ name: "", email: "", grade: "", msg: "" });
   const [status, setStatus] = useState("idle"); // idle | sending | success | error
 
@@ -26,9 +28,6 @@ export default function Contact({ dark }) {
     try {
       await sendJoinEmail(form);
       setStatus("success");
-      setTimeout(() => {
-        window.open(WHATSAPP_LINK, "_blank");
-      }, 1800);
     } catch (err) {
       console.error("Submit error:", err);
       setStatus("error");
@@ -55,11 +54,11 @@ export default function Contact({ dark }) {
         <FadeIn>
           <div style={{ textAlign: "center", marginBottom: 44 }}>
             <h2 style={{ fontSize: "clamp(1.8rem,3.5vw,2.5rem)", fontFamily: "'Playfair Display',serif", fontWeight: 900, color: dark ? "#f1f5f9" : "#0f172a" }}>
-              Join the{" "}
-              <span style={{ background: "linear-gradient(135deg,#38bdf8,#818cf8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Movement</span>
+              {t.contact.title}{" "}
+              <span style={{ background: "linear-gradient(135deg,#38bdf8,#818cf8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{t.contact.highlight}</span>
             </h2>
             <p style={{ color: dark ? "#64748b" : "#64748b", marginTop: 10, fontFamily: "'Lora',serif" }}>
-              Fill in your details — we'll get in touch and add you to the community!
+              {t.contact.subtitle}
             </p>
           </div>
         </FadeIn>
@@ -69,10 +68,28 @@ export default function Contact({ dark }) {
             // ── Success state ──
             <div style={{ textAlign: "center", padding: "48px 24px", background: dark ? "rgba(16,185,129,0.1)" : "rgba(16,185,129,0.08)", border: "1.5px solid rgba(16,185,129,0.3)", borderRadius: 20 }}>
               <div style={{ fontSize: 56, marginBottom: 16 }}>🎉</div>
-              <h3 style={{ fontFamily: "'Playfair Display',serif", color: dark ? "#f1f5f9" : "#0f172a", fontSize: 22, marginBottom: 10 }}>You're in!</h3>
-              <p style={{ color: dark ? "#94a3b8" : "#475569", fontFamily: "'Lora',serif" }}>
-                Your details have been sent. Taking you to the WhatsApp community now... 🚀
+              <h3 style={{ fontFamily: "'Playfair Display',serif", color: dark ? "#f1f5f9" : "#0f172a", fontSize: 22, marginBottom: 10 }}>Request Received!</h3>
+              <p style={{ color: dark ? "#94a3b8" : "#475569", fontFamily: "'Lora',serif", marginBottom: 24 }}>
+                {t.contact.successMsg}
               </p>
+              <a
+                href={WHATSAPP_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "inline-block",
+                  background: "linear-gradient(135deg,#25d366,#128c7e)",
+                  color: "#fff",
+                  padding: "12px 28px",
+                  borderRadius: 12,
+                  fontFamily: "'Syne',sans-serif",
+                  fontWeight: 700,
+                  fontSize: 14,
+                  textDecoration: "none",
+                }}
+              >
+                Join WhatsApp Community →
+              </a>
             </div>
           ) : (
             // ── Form ──
@@ -145,7 +162,7 @@ export default function Contact({ dark }) {
                 onMouseEnter={e => { if (isReady) e.target.style.opacity = "0.88"; }}
                 onMouseLeave={e => { e.target.style.opacity = "1"; }}
               >
-                {status === "sending" ? "Sending... ⏳" : "Join the Movement 🚀"}
+                {status === "sending" ? "Sending... ⏳" : t.contact.submitBtn}
               </button>
 
               <p style={{ textAlign: "center", marginTop: 14, fontSize: 12, color: dark ? "#334155" : "#94a3b8", fontFamily: "'Lora',serif" }}>

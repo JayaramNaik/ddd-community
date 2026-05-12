@@ -53,20 +53,20 @@ export const GUIDANCE_AREAS = [
 ];
 
 export const SCHOLARSHIPS = [
-  { name: "NSP Scholarship",        desc: "National Scholarship Portal — Central Govt scholarships for minority, OBC, SC/ST students.", badge: "Central Govt", url: "https://scholarships.gov.in/" },
-  { name: "SSP Scholarship",        desc: "State Scholarship Portal — Karnataka state-level scholarships for eligible students.",        badge: "State Govt",   url: "https://sje.karnataka.gov.in/new/" },
-  { name: "Vidyadhan",              desc: "Merit-cum-need based scholarship supporting students from economically weaker sections.",      badge: "Foundation",   url: "https://www.vidyadhan.org/" },
-  { name: "Federal Bank Scholarship",desc: "Federal Bank scholarships supporting meritorious students across India.",        badge: "Bank",      url: "https://www.federalbank.co.in/personal/investments/scholarship" },
-  { name: "Vidyaposhak",            desc: "Scholarship for students who have excelled in competitive exams, rewarding academic talent.", badge: "Competitive",  url: "https://vidyaposhak.rediffusion.com/" },
-  { name: "More Coming Soon ✨",    desc: "We are constantly curating new scholarships. Stay tuned for regular updates!",               badge: "Soon",         url: null },
+  { name: "NSP Scholarship",          desc: "National Scholarship Portal — Central Govt scholarships for minority, OBC, SC/ST students.",                                                          badge: "Central Govt", url: "https://scholarships.gov.in/" },
+  { name: "SSP Scholarship",          desc: "Karnataka's State Scholarship Portal for post-matric scholarships covering SC, ST, OBC, and minority categories.",                                    badge: "State Govt",   url: "https://ssp.karnataka.gov.in/ssp_post_home/" },
+  { name: "Vidyadhan",                desc: "Merit-cum-need based scholarship supporting students from economically weaker sections.",                                                              badge: "Foundation",   url: "https://www.vidyadhan.org/" },
+  { name: "Federal Bank Scholarship", desc: "Federal Bank's Hormis Memorial Foundation scholarship for meritorious students pursuing professional courses.",                                       badge: "Bank",         url: "https://www.buddy4study.com/scholarship/federal-bank-hormis-memorial-foundation-scholarships" },
+  { name: "Vidyaposhak",              desc: "An NGO supporting underprivileged students in Karnataka with scholarships and mentorship to pursue higher education.",                                 badge: "NGO",          url: "https://www.vidyaposhak.ngo/" },
+  { name: "More Coming Soon ✨",      desc: "We are constantly curating new scholarships. Stay tuned for regular updates!",                                                                        badge: "Soon",         url: null },
 ];
 
 export const FAQS = [
-  { q: "Who can join this community?",         a: "Any student after 10th, PUC, or pursuing a degree who needs academic or career guidance." },
-  { q: "Is this community free to join?",      a: "Yes! Completely free. Our seniors volunteer their time to help juniors succeed." },
-  { q: "How do I get mentorship?",             a: "Once you join, you can post your questions in discussion rooms or connect with a mentor directly." },
-  { q: "What kind of scholarships are covered?",a: "We cover NSP, SSP, Vidyadhan, foundation scholarships, and the Vidyaposhak competitive scholarship." },
-  { q: "Can I become a mentor too?",           a: "Absolutely! If you're a senior who wants to guide others, reach out and join our mentor team." },
+  { q: "Who can join this community?",          a: "Any student after 10th, PUC, or pursuing a degree who needs academic or career guidance." },
+  { q: "Is this community free to join?",       a: "Yes! Completely free. Our seniors volunteer their time to help juniors succeed." },
+  { q: "How do I get mentorship?",              a: "Once you join, you can post your questions in discussion rooms or connect with a mentor directly." },
+  { q: "What kind of scholarships are covered?", a: "We cover NSP, SSP, Vidyadhan, foundation scholarships, and the Vidyaposhak competitive scholarship." },
+  { q: "Can I become a mentor too?",            a: "Absolutely! If you're a senior who wants to guide others, reach out and join our mentor team." },
 ];
 
 export const COMMUNITY_TABS = [
@@ -78,4 +78,4 @@ export const COMMUNITY_TABS = [
 
 export const WHATSAPP_LINK = "https://chat.whatsapp.com/LpUzYQdW7mhFR5kgxirpgE";
 
-export const NAV_LINKS = ["About", "Mentors", "Guidance", "Scholarships", "Community", "FAQ"];
+export const NAV_LINKS = ["About", "Mentors", "Guidance", "Scholarships","What Next?", "Exams","Engineering","Medical", "Community", "FAQ"];

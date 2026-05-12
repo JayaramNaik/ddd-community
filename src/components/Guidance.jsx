@@ -4,9 +4,11 @@
 // ─────────────────────────────────────────────────────────────
 
 import { FadeIn } from "../hooks/useInView.jsx";
+import { useTranslation } from "../data/translations.js";
 import { GUIDANCE_AREAS } from "../data/content.js";
 
-export default function Guidance({ dark }) {
+export default function Guidance({ dark, lang }) {
+  const t = useTranslation(lang);
   return (
     <section id="guidance" style={{ padding: "100px 2rem", background: dark ? "#060d1f" : "#f1f5f9" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
@@ -17,8 +19,8 @@ export default function Guidance({ dark }) {
               WHAT WE OFFER
             </div>
             <h2 style={{ fontSize: "clamp(2rem,4vw,3rem)", fontFamily: "'Playfair Display',serif", fontWeight: 900, color: dark ? "#f1f5f9" : "#0f172a" }}>
-              Areas of{" "}
-              <span style={{ background: "linear-gradient(135deg,#38bdf8,#818cf8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Guidance</span>
+              {t.guidance.title}{" "}
+              <span style={{ background: "linear-gradient(135deg,#38bdf8,#818cf8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{t.guidance.highlight}</span>
             </h2>
           </div>
         </FadeIn>

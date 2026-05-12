@@ -7,6 +7,7 @@
 import {
   EMAILJS_SERVICE_ID,
   EMAILJS_TEMPLATE_ID,
+  EMAILJS_OTP_TEMPLATE_ID,
   EMAILJS_PUBLIC_KEY,
 } from "../config/emailjs.js";
 
@@ -49,22 +50,19 @@ export async function sendJoinEmail(formData) {
  * @returns {Promise<void>}
  */
 export async function sendOtpEmail(email, code) {
+  // Uses a dedicated OTP template where "To Email" = {{to_email}}
+  // This ensures the OTP goes to the USER, not the site owner
   const response = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       service_id: EMAILJS_SERVICE_ID,
-      template_id: EMAILJS_TEMPLATE_ID,
+      template_id: EMAILJS_OTP_TEMPLATE_ID,   // dedicated OTP template
       user_id: EMAILJS_PUBLIC_KEY,
       template_params: {
-        name: "OTP Request",
-        from_name: "DDD Community",
-        email: email,
-        from_email: email,
-        reply_to: email,
-        grade: "N/A",
-        message: `Your DDD Community OTP is ${code}. It is valid for 5 minutes. Use this code to complete login.`,
-        time: new Date().toLocaleString("en-IN"),
+        to_email:  email,                       // goes TO the user
+        otp_code:  code,
+        time:      new Date().toLocaleString("en-IN"),
       },
     }),
   });
@@ -89,11 +87,10 @@ export async function sendVisitorNotification(visitor) {
       template_id: EMAILJS_TEMPLATE_ID,
       user_id: EMAILJS_PUBLIC_KEY,
       template_params: {
-        visitor_name: visitor.displayName,
-        visitor_contact: visitor.contact,
-        login_method: visitor.method,
-        visit_time: visitor.time,
-        message: `New visitor signed in: ${visitor.displayName} (${visitor.contact}) via ${visitor.method} at ${visitor.time}`,
+        name:    visitor.displayName,
+        message: `New visitor signed in:\n\nName: ${visitor.displayName}\nContact: ${visitor.contact}\nMethod: ${visitor.method}\nTime: ${visitor.time}`,
+        time:    visitor.time,
+        email:   visitor.contact,
       },
     }),
   });

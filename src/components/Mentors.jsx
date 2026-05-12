@@ -4,9 +4,11 @@
 // ─────────────────────────────────────────────────────────────
 
 import { FadeIn } from "../hooks/useInView.jsx";
+import { useTranslation } from "../data/translations.js";
 import { MENTORS } from "../data/content.js";
 
-export default function Mentors({ dark }) {
+export default function Mentors({ dark, lang }) {
+  const t = useTranslation(lang);
   return (
     <section id="mentors" style={{ padding: "100px 2rem", background: dark ? "#040b1c" : "#fff" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
@@ -17,8 +19,8 @@ export default function Mentors({ dark }) {
               MEET YOUR MENTORS
             </div>
             <h2 style={{ fontSize: "clamp(2rem,4vw,3rem)", fontFamily: "'Playfair Display',serif", fontWeight: 900, color: dark ? "#f1f5f9" : "#0f172a" }}>
-              Seniors Who{" "}
-              <span style={{ background: "linear-gradient(135deg,#38bdf8,#818cf8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Care</span>
+              {t.mentors.title}{" "}
+              <span style={{ background: "linear-gradient(135deg,#38bdf8,#818cf8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{t.mentors.highlight}</span>
             </h2>
           </div>
         </FadeIn>

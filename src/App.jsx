@@ -4,7 +4,7 @@
 //  To reorder or add sections, edit here.
 // ─────────────────────────────────────────────────────────────
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { RECEIVER_EMAIL } from "./config/emailjs.js";
 
 import Navbar       from "./components/Navbar.jsx";
@@ -19,9 +19,17 @@ import Guidelines   from "./components/Guidelines.jsx";
 import FAQ          from "./components/FAQ.jsx";
 import Contact      from "./components/Contact.jsx";
 import Footer       from "./components/Footer.jsx";
+const WhatNext = lazy(() => import("./components/WhatNext.jsx"));
+import LanguageSelect from "./components/LanguageSelect.jsx";
+const MentorProfile = lazy(() => import("./components/MentorProfile.jsx"));
+const AdminMentors = lazy(() => import("./components/AdminMentors.jsx"));
+const EngineeringRoadmap = lazy(() => import("./components/EngineeringRoadmap.jsx"));
+const MedicalRoadmap = lazy(() => import("./components/MedicalRoadmap.jsx"));
+const ExamsPage = lazy(() => import("./components/ExamsPage.jsx"));
 
 export default function App() {
   const [dark, setDark] = useState(true);
+  const [lang, setLang] = useState(null); // null = not selected yet
   const [user, setUser] = useState(() => {
     try {
       return JSON.parse(sessionStorage.getItem("ddd-user"));
@@ -74,19 +82,29 @@ export default function App() {
     return <Login onLogin={visitor => { recordVisitor(visitor); setUser(visitor); }} dark={dark} />;
   }
 
+  if (!lang) {
+    return <LanguageSelect dark={dark} onSelect={setLang} />;
+  }
+
   return (
     <div style={{ fontFamily: "'Syne', sans-serif", scrollBehavior: "smooth" }}>
-      <Navbar dark={dark} setDark={setDark} user={user} visitorCount={visitorCount} isHost={isHost} onLogout={() => setUser(null)} onShowVisitors={() => setShowVisitors(true)} />
-      <Hero         dark={dark} />
-      <About        dark={dark} />
-      <Mentors      dark={dark} />
-      <Guidance     dark={dark} />
-      <Scholarships dark={dark} />
-      <Community    dark={dark} />
+      <Navbar dark={dark} setDark={setDark} user={user} visitorCount={visitorCount} isHost={isHost} onLogout={() => { setUser(null); setLang(null); }} onShowVisitors={() => setShowVisitors(true)} lang={lang} />
+      <Hero         dark={dark} lang={lang} />
+      <About        dark={dark} lang={lang} />
+      <Mentors      dark={dark} lang={lang} />
+      <Suspense fallback={<div style={{height:"50px"}}/>}><MentorProfile dark={dark} user={user} /></Suspense>
+{isHost && <Suspense fallback={null}><AdminMentors dark={dark} /></Suspense>}
+      <Guidance     dark={dark} lang={lang} />
+      <Scholarships dark={dark} lang={lang} />
+      <Suspense fallback={<div style={{height:"100px"}}/>}><WhatNext dark={dark} lang={lang} /></Suspense>
+      <Suspense fallback={<div style={{height:"100px"}}/>}><EngineeringRoadmap dark={dark} lang={lang} /></Suspense>
+      <Suspense fallback={<div style={{height:"100px"}}/>}><MedicalRoadmap dark={dark} lang={lang} /></Suspense>
+      <Suspense fallback={<div style={{height:"100px"}}/>}><ExamsPage dark={dark} /></Suspense>
+      <Community    dark={dark} lang={lang} />
       <Guidelines   dark={dark} />
-      <FAQ          dark={dark} />
-      <Contact      dark={dark} />
-      <Footer />
+      <FAQ          dark={dark} lang={lang} />
+      <Contact      dark={dark} lang={lang} />
+      <Footer lang={lang} />
       {showVisitors && (
         <div style={{
           position: 'fixed',

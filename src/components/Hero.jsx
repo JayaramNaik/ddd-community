@@ -5,10 +5,12 @@
 import { useState } from "react";
 import { FadeIn } from "../hooks/useInView.jsx";
 import { WHATSAPP_LINK } from "../data/content.js";
+import { useTranslation } from "../data/translations.js";
 
 const PARTICLE_COUNT = 30;
 
-export default function Hero({ dark }) {
+export default function Hero({ dark, lang }) {
+  const t = useTranslation(lang);
   const [particles] = useState(() =>
     Array.from({ length: PARTICLE_COUNT }, () => ({
       x:     Math.random() * 100,
@@ -42,21 +44,21 @@ export default function Hero({ dark }) {
 
         <FadeIn>
           <div style={{ display: "inline-block", background: dark ? "rgba(56,189,248,0.1)" : "rgba(56,189,248,0.15)", border: "1px solid rgba(56,189,248,0.3)", borderRadius: 20, padding: "6px 18px", fontSize: 12, color: "#38bdf8", fontWeight: 700, marginBottom: 24, fontFamily: "'Syne', sans-serif", letterSpacing: "0.1em", textTransform: "uppercase" }}>
-            Student Mentorship Community 🌟
+            {t.hero.badge}
           </div>
         </FadeIn>
 
         <FadeIn delay={0.15}>
           <h1 style={{ fontSize: "clamp(2.8rem,7vw,5.5rem)", fontFamily: "'Playfair Display', serif", fontWeight: 900, lineHeight: 1.1, marginBottom: 24, color: dark ? "#fff" : "#0f172a" }}>
-            <span style={{ background: "linear-gradient(135deg,#38bdf8,#818cf8,#a78bfa)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Dream • Decide</span>
+            <span style={{ background: "linear-gradient(135deg,#38bdf8,#818cf8,#a78bfa)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{t.hero.title1}</span>
             <br />
-            <span style={{ color: dark ? "#fff" : "#0f172a" }}>Dominate ✨</span>
+            <span style={{ color: dark ? "#fff" : "#0f172a" }}>{t.hero.title2}</span>
           </h1>
         </FadeIn>
 
         <FadeIn delay={0.3}>
           <p style={{ fontSize: "clamp(1rem,2.5vw,1.3rem)", color: dark ? "#94a3b8" : "#475569", maxWidth: 600, margin: "0 auto 40px", lineHeight: 1.7, fontFamily: "'Lora', serif" }}>
-            A student mentorship community helping juniors make better academic, career, and life decisions.
+            {t.hero.subtitle}
           </p>
         </FadeIn>
 
@@ -70,7 +72,7 @@ export default function Hero({ dark }) {
               onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.boxShadow = "0 0 50px rgba(56,189,248,0.6)"; }}
               onMouseLeave={e => { e.target.style.transform = ""; e.target.style.boxShadow = "0 0 30px rgba(56,189,248,0.4)"; }}
             >
-              Join Community 🚀
+              {t.hero.joinBtn}
             </a>
             <a
               href="#guidance"
@@ -78,7 +80,7 @@ export default function Hero({ dark }) {
               onMouseEnter={e => { e.target.style.background = "rgba(56,189,248,0.12)"; }}
               onMouseLeave={e => { e.target.style.background = dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)"; }}
             >
-              Explore Opportunities →
+              {t.hero.exploreBtn}
             </a>
           </div>
         </FadeIn>
@@ -86,7 +88,7 @@ export default function Hero({ dark }) {
         <FadeIn delay={0.6}>
           <div style={{ marginTop: 56, display: "inline-block", background: dark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)", border: `1px solid ${dark ? "rgba(56,189,248,0.2)" : "rgba(56,189,248,0.3)"}`, borderRadius: 16, padding: "18px 32px", maxWidth: 520 }}>
             <p style={{ margin: 0, fontSize: 15, color: dark ? "#94a3b8" : "#475569", fontFamily: "'Lora', serif", fontStyle: "italic", lineHeight: 1.75 }}>
-              🌱 We are just beginning — seniors and juniors learning together, one step at a time. This is a new chapter for all of us.
+              {t.hero.note}
             </p>
           </div>
         </FadeIn>
