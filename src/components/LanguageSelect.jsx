@@ -12,7 +12,8 @@ const LANGUAGES = [
     native: "English",
     greeting: "Welcome to DDD Community!",
     sub: "Your mentorship journey starts here.",
-    flag: "🇬🇧",
+    icon: "A",
+    iconBg: "linear-gradient(135deg,#38bdf8,#818cf8)",
   },
   {
     code: "kn",
@@ -20,7 +21,8 @@ const LANGUAGES = [
     native: "ಕನ್ನಡ",
     greeting: "DDD ಸಮುದಾಯಕ್ಕೆ ಸ್ವಾಗತ!",
     sub: "ನಿಮ್ಮ ಮಾರ್ಗದರ್ಶನ ಪ್ರಯಾಣ ಇಲ್ಲಿ ಪ್ರಾರಂಭವಾಗುತ್ತದೆ.",
-    flag: "🏴",
+    icon: "ಕ",
+    iconBg: "linear-gradient(135deg,#f59e0b,#ef4444)",
   },
   {
     code: "hi",
@@ -28,7 +30,8 @@ const LANGUAGES = [
     native: "हिन्दी",
     greeting: "DDD समुदाय में आपका स्वागत है!",
     sub: "आपकी मार्गदर्शन यात्रा यहाँ से शुरू होती है।",
-    flag: "🇮🇳",
+    icon: "ह",
+    iconBg: "linear-gradient(135deg,#34d399,#38bdf8)",
   },
 ];
 
@@ -139,19 +142,23 @@ export default function LanguageSelect({ dark, onSelect }) {
                 }
               }}
             >
-              {/* Flag / Icon */}
+              {/* Language Icon */}
               <div style={{
-                fontSize: 36,
+                fontSize: 22,
+                fontWeight: 900,
+                fontFamily: "'Syne',sans-serif",
                 flexShrink: 0,
                 width: 56,
                 height: 56,
                 borderRadius: 14,
-                background: selected?.code === lang.code ? "rgba(56,189,248,0.15)" : (dark ? "rgba(255,255,255,0.06)" : "#f1f5f9"),
+                background: selected?.code === lang.code ? lang.iconBg : (dark ? "rgba(255,255,255,0.06)" : "#f1f5f9"),
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+                color: selected?.code === lang.code ? "#fff" : (dark ? "#94a3b8" : "#64748b"),
+                transition: "all 0.25s",
               }}>
-                {lang.flag}
+                {lang.icon}
               </div>
 
               {/* Text */}
