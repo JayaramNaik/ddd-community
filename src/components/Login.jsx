@@ -1,16 +1,24 @@
+// ─────────────────────────────────────────────────────────────
+//  src/components/Login.jsx
+//  Email OTP login — saves user to Firestore with role
+// ─────────────────────────────────────────────────────────────
+
 import { useState } from "react";
 import { sendOtpEmail, sendVisitorNotification } from "../utils/sendEmail.js";
+import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "../config/firebase.js";
+import { RECEIVER_EMAIL } from "../config/emailjs.js";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function Login({ onLogin, dark }) {
-  const [contact, setContact] = useState("");
-  const [otp, setOtp] = useState("");
+  const [contact, setContact]         = useState("");
+  const [otp, setOtp]                 = useState("");
   const [generatedOtp, setGeneratedOtp] = useState(null);
-  const [step, setStep] = useState("input");
-  const [status, setStatus] = useState("");
-  const [error, setError] = useState("");
-  const [isSending, setIsSending] = useState(false);
+  const [step, setStep]               = useState("input");
+  const [status, setStatus]           = useState("");
+  const [error, setError]             = useState("");
+  const [isSending, setIsSending]     = useState(false);
 
   const sendOtp = async () => {
     setError("");
@@ -18,7 +26,6 @@ export default function Login({ onLogin, dark }) {
       setError("Please enter a valid email address.");
       return;
     }
-
     const code = String(Math.floor(100000 + Math.random() * 900000));
     setIsSending(true);
     setStatus("Sending OTP to your inbox...");
@@ -37,25 +44,53 @@ export default function Login({ onLogin, dark }) {
 
   const verifyOtp = async () => {
     setError("");
-    if (!generatedOtp) {
-      setError("No OTP sent. Please request a new one.");
-      return;
-    }
-    if (otp.trim() !== generatedOtp.code) {
-      setError("Incorrect OTP. Please try again.");
-      return;
-    }
+    if (!generatedOtp) { setError("No OTP sent. Please request a new one."); return; }
+    if (otp.trim() !== generatedOtp.code) { setError("Incorrect OTP. Please try again."); return; }
     const elapsed = Date.now() - generatedOtp.timestamp;
-    if (elapsed > 5 * 60 * 1000) {
-      setError("OTP has expired. Please request a new one.");
-      return;
+    if (elapsed > 5 * 60 * 1000) { setError("OTP has expired. Please request a new one."); return; }
+
+    const email = contact.trim();
+
+    // ── Save / fetch user in Firestore ──────────────────────
+    // Use email as document ID (replace dots for Firestore safety)
+    const docId  = email.replace(/\./g, "_");
+    const isAdmin = email === RECEIVER_EMAIL;
+
+    try {
+      const ref      = doc(db, "users", docId);
+      const snapshot = await getDoc(ref);
+
+      if (!snapshot.exists()) {
+        // First time — create user document
+        await setDoc(ref, {
+          email,
+          role:      isAdmin ? "admin" : "user",
+          banned:    false,
+          createdAt: serverTimestamp(),
+          lastLogin: serverTimestamp(),
+        });
+      } else {
+        // Returning user — check if banned
+        const data = snapshot.data();
+        if (data.banned) {
+          setError("Your account has been suspended. Please contact the admin.");
+          return;
+        }
+        // Update last login
+        await setDoc(ref, { lastLogin: serverTimestamp() }, { merge: true });
+      }
+    } catch (err) {
+      console.warn("Firestore user save failed:", err);
+      // Don't block login if Firestore fails
     }
 
+    // ── Visitor notification ─────────────────────────────────
     const visitor = {
-      contact: contact.trim(),
-      method: "Email OTP",
-      displayName: contact.trim(),
+      contact: email,
+      method:  "Email OTP",
+      displayName: email,
       time: new Date().toLocaleString("en-IN"),
+      role: isAdmin ? "admin" : "user",
     };
 
     try {
@@ -90,32 +125,22 @@ export default function Login({ onLogin, dark }) {
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <div style={{ fontSize: 48, marginBottom: 16 }}>🎓</div>
           <div style={{
-            fontSize: 11,
-            fontWeight: 700,
-            letterSpacing: "0.16em",
-            textTransform: "uppercase",
-            color: "#38bdf8",
-            marginBottom: 10,
+            fontSize: 11, fontWeight: 700, letterSpacing: "0.16em",
+            textTransform: "uppercase", color: "#38bdf8", marginBottom: 10,
             fontFamily: "'Syne',sans-serif",
           }}>
             Dream • Decide • Dominate
           </div>
           <h1 style={{
-            fontSize: "clamp(1.6rem,4vw,2.4rem)",
-            margin: "0 0 12px",
-            fontFamily: "'Playfair Display',serif",
-            fontWeight: 900,
-            color: dark ? "#f8fafc" : "#0f172a",
-            lineHeight: 1.2,
+            fontSize: "clamp(1.6rem,4vw,2.4rem)", margin: "0 0 12px",
+            fontFamily: "'Playfair Display',serif", fontWeight: 900,
+            color: dark ? "#f8fafc" : "#0f172a", lineHeight: 1.2,
           }}>
             Welcome Back
           </h1>
           <p style={{
-            color: dark ? "#94a3b8" : "#64748b",
-            fontSize: 14,
-            lineHeight: 1.7,
-            margin: 0,
-            fontFamily: "'Lora',serif",
+            color: dark ? "#94a3b8" : "#64748b", fontSize: 14,
+            lineHeight: 1.7, margin: 0, fontFamily: "'Lora',serif",
           }}>
             Enter your email address to receive a one-time password and sign in.
           </p>
@@ -123,12 +148,9 @@ export default function Login({ onLogin, dark }) {
 
         {/* Email Input */}
         <label style={{
-          display: "block",
-          marginBottom: 8,
+          display: "block", marginBottom: 8,
           color: dark ? "#cbd5e1" : "#475569",
-          fontSize: 13,
-          fontWeight: 700,
-          fontFamily: "'Syne',sans-serif",
+          fontSize: 13, fontWeight: 700, fontFamily: "'Syne',sans-serif",
         }}>
           📧 Email Address
         </label>
@@ -140,17 +162,12 @@ export default function Login({ onLogin, dark }) {
           placeholder="you@example.com"
           disabled={step === "verify"}
           style={{
-            width: "100%",
-            padding: "13px 16px",
-            borderRadius: 14,
+            width: "100%", padding: "13px 16px", borderRadius: 14,
             border: `1.5px solid ${step === "verify" ? "rgba(56,189,248,0.3)" : (dark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)")}`,
             background: dark ? "rgba(255,255,255,0.04)" : "#f8fafc",
             color: dark ? "#f8fafc" : "#0f172a",
-            marginBottom: 18,
-            fontSize: 14,
-            fontFamily: "'Lora',serif",
-            outline: "none",
-            boxSizing: "border-box",
+            marginBottom: 18, fontSize: 14, fontFamily: "'Lora',serif",
+            outline: "none", boxSizing: "border-box",
             opacity: step === "verify" ? 0.7 : 1,
           }}
         />
@@ -159,12 +176,9 @@ export default function Login({ onLogin, dark }) {
         {step === "verify" && (
           <>
             <label style={{
-              display: "block",
-              marginBottom: 8,
+              display: "block", marginBottom: 8,
               color: dark ? "#cbd5e1" : "#475569",
-              fontSize: 13,
-              fontWeight: 700,
-              fontFamily: "'Syne',sans-serif",
+              fontSize: 13, fontWeight: 700, fontFamily: "'Syne',sans-serif",
             }}>
               🔐 Enter OTP
             </label>
@@ -177,20 +191,13 @@ export default function Login({ onLogin, dark }) {
               placeholder="6-digit code"
               autoFocus
               style={{
-                width: "100%",
-                padding: "13px 16px",
-                borderRadius: 14,
+                width: "100%", padding: "13px 16px", borderRadius: 14,
                 border: "1.5px solid rgba(56,189,248,0.4)",
                 background: dark ? "rgba(56,189,248,0.06)" : "rgba(56,189,248,0.04)",
                 color: dark ? "#f8fafc" : "#0f172a",
-                marginBottom: 18,
-                fontSize: 22,
-                fontWeight: 700,
-                letterSpacing: 8,
-                textAlign: "center",
-                outline: "none",
-                boxSizing: "border-box",
-                fontFamily: "'Syne',sans-serif",
+                marginBottom: 18, fontSize: 22, fontWeight: 700,
+                letterSpacing: 8, textAlign: "center", outline: "none",
+                boxSizing: "border-box", fontFamily: "'Syne',sans-serif",
               }}
             />
           </>
@@ -199,28 +206,18 @@ export default function Login({ onLogin, dark }) {
         {/* Error / Status */}
         {error && (
           <div style={{
-            background: "rgba(248,113,113,0.1)",
-            border: "1px solid rgba(248,113,113,0.3)",
-            borderRadius: 10,
-            padding: "10px 14px",
-            color: "#f87171",
-            marginBottom: 14,
-            fontSize: 13,
-            fontFamily: "'Lora',serif",
+            background: "rgba(248,113,113,0.1)", border: "1px solid rgba(248,113,113,0.3)",
+            borderRadius: 10, padding: "10px 14px", color: "#f87171",
+            marginBottom: 14, fontSize: 13, fontFamily: "'Lora',serif",
           }}>
             ⚠️ {error}
           </div>
         )}
         {status && (
           <div style={{
-            background: "rgba(52,211,153,0.1)",
-            border: "1px solid rgba(52,211,153,0.3)",
-            borderRadius: 10,
-            padding: "10px 14px",
-            color: "#34d399",
-            marginBottom: 14,
-            fontSize: 13,
-            fontFamily: "'Lora',serif",
+            background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.3)",
+            borderRadius: 10, padding: "10px 14px", color: "#34d399",
+            marginBottom: 14, fontSize: 13, fontFamily: "'Lora',serif",
           }}>
             ✅ {status}
           </div>
@@ -231,20 +228,13 @@ export default function Login({ onLogin, dark }) {
           onClick={step === "input" ? sendOtp : verifyOtp}
           disabled={step === "input" && isSending}
           style={{
-            width: "100%",
-            padding: "14px 18px",
-            borderRadius: 14,
-            border: "none",
+            width: "100%", padding: "14px 18px", borderRadius: 14, border: "none",
             background: step === "input" && isSending
               ? "rgba(56,189,248,0.45)"
               : "linear-gradient(135deg,#38bdf8,#818cf8)",
-            color: "#fff",
-            fontSize: 15,
-            fontWeight: 700,
+            color: "#fff", fontSize: 15, fontWeight: 700,
             cursor: step === "input" && isSending ? "not-allowed" : "pointer",
-            fontFamily: "'Syne',sans-serif",
-            letterSpacing: "0.02em",
-            transition: "opacity 0.2s",
+            fontFamily: "'Syne',sans-serif", letterSpacing: "0.02em", transition: "opacity 0.2s",
           }}
           onMouseEnter={e => { if (!(step === "input" && isSending)) e.currentTarget.style.opacity = "0.9"; }}
           onMouseLeave={e => { e.currentTarget.style.opacity = "1"; }}
@@ -257,45 +247,27 @@ export default function Login({ onLogin, dark }) {
         {/* Change Email */}
         {step === "verify" && (
           <button
-            onClick={() => {
-              setStep("input");
-              setContact("");
-              setOtp("");
-              setGeneratedOtp(null);
-              setStatus("");
-              setError("");
-            }}
+            onClick={() => { setStep("input"); setContact(""); setOtp(""); setGeneratedOtp(null); setStatus(""); setError(""); }}
             style={{
-              width: "100%",
-              marginTop: 10,
-              padding: "12px 18px",
-              borderRadius: 14,
+              width: "100%", marginTop: 10, padding: "12px 18px", borderRadius: 14,
               border: `1px solid ${dark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)"}`,
-              background: "transparent",
-              color: dark ? "#94a3b8" : "#64748b",
-              fontSize: 13,
-              cursor: "pointer",
-              fontFamily: "'Syne',sans-serif",
-              fontWeight: 600,
+              background: "transparent", color: dark ? "#94a3b8" : "#64748b",
+              fontSize: 13, cursor: "pointer", fontFamily: "'Syne',sans-serif", fontWeight: 600,
             }}
           >
             ← Change Email
           </button>
         )}
 
-        {/* Footer note */}
+        {/* Footer */}
         <p style={{
-          marginTop: 24,
-          fontSize: 12,
-          lineHeight: 1.7,
+          marginTop: 24, fontSize: 12, lineHeight: 1.7,
           color: dark ? "#475569" : "#94a3b8",
-          textAlign: "center",
-          fontFamily: "'Lora',serif",
+          textAlign: "center", fontFamily: "'Lora',serif",
         }}>
           OTP is sent to your email via EmailJS. Valid for 5 minutes.
           <br />Your data is safe and never shared.
         </p>
-
       </div>
     </main>
   );
