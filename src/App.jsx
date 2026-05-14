@@ -4,6 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 
 import { useState, useEffect, lazy, Suspense } from "react";
+import { useNotifications, PushPermissionBanner, PostNotification } from "./components/Notifications.jsx";
 import { RECEIVER_EMAIL } from "./config/emailjs.js";
 
 import Navbar         from "./components/Navbar.jsx";
@@ -47,6 +48,7 @@ export default function App() {
   const [showVisitors, setShowVisitors] = useState(false);
 
   const visitorCount = visitorLog.length;
+  const { notifications, unread, markAllRead } = useNotifications();
 
   // ── Admin check — your email = admin ──────────────────────
   const isAdmin = user && (
@@ -159,7 +161,7 @@ export default function App() {
       {isAdmin && <AdminBar onGoToDashboard={goToDashboard} />}
 
       {/* Push content down so AdminBar doesn't cover Navbar */}
-      <div style={{ paddingTop: isAdmin ? 36 : 0 }}>
+      <div style={{ paddingTop: isAdmin ? 104 : 68 }}>
         <Navbar
           dark={dark}
           setDark={setDark}
@@ -169,6 +171,10 @@ export default function App() {
           onLogout={handleLogout}
           onShowVisitors={() => setShowVisitors(true)}
           lang={lang}
+          notifications={notifications}
+          unread={unread}
+          onMarkRead={markAllRead}
+          adminBarOffset={isAdmin ? 36 : 0}
         />
 
         <Hero         dark={dark} lang={lang} />
@@ -183,6 +189,12 @@ export default function App() {
           <Suspense fallback={null}>
             <AdminMentors dark={dark} />
           </Suspense>
+        )}
+
+        {isAdmin && (
+          <div style={{ maxWidth: 800, margin: "0 auto", padding: "0 2rem" }}>
+            <PostNotification dark={dark} user={user} />
+          </div>
         )}
 
         <Guidance     dark={dark} lang={lang} />
@@ -207,6 +219,8 @@ export default function App() {
         <Contact      dark={dark} lang={lang} />
         <Footer       lang={lang} />
       </div>
+
+      <PushPermissionBanner dark={dark} />
 
       {/* ── Visitor Log Modal ── */}
       {showVisitors && (
