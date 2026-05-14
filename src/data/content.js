@@ -1,47 +1,9 @@
 // ─────────────────────────────────────────────────────────────
 //  src/data/content.js
 //  All site content lives here.
-//  To update text, mentors, scholarships, FAQs — edit THIS file.
+//  NOTE: MENTORS removed — now managed via Firestore
+//  Add/remove mentors from Admin Dashboard on your site
 // ─────────────────────────────────────────────────────────────
-
-export const MENTORS = [
-  {
-    name: "Jayaram L Naik",
-    college: "Information Science & Engineering",
-    institution: "UVCE Bengaluru",
-    interests: ["Yoga", "Hindustani Music", "Travelling", "Mythology", "History", "Current Affairs"],
-    emoji: "🎓",
-    gradientFrom: "#3b82f6",
-    gradientTo: "#22d3ee",
-  },
-  {
-    name: "Nagashree M Naik",
-    college: "BCA",
-    institution: "LBAS College, Sagar",
-    interests: ["Drawing", "Singing", "Travelling", "Badminton 🏸", "Painting 🎨", "Cleaning"],
-    emoji: "🌟",
-    gradientFrom: "#a855f7",
-    gradientTo: "#f472b6",
-  },
-  {
-    name: "Naveen R Naik",
-    college: "Mentor",
-    institution: "",
-    interests: ["Guidance", "Career Counselling", "Student Support"],
-    emoji: "🚀",
-    gradientFrom: "#10b981",
-    gradientTo: "#2dd4bf",
-  },
-  {
-    name: "Bhargav V Naik",
-    college: "PUC (Science)",
-    institution: "",
-    interests: ["History", "Geography", "Travelling", "Volleyball"],
-    emoji: "🌍",
-    gradientFrom: "#f59e0b",
-    gradientTo: "#ef4444",
-  },
-];
 
 export const GUIDANCE_AREAS = [
   { icon: "📚", title: "Academic Guidance",    desc: "Clear pathways for 10th, PUC, and degree students to excel academically." },

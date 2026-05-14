@@ -205,12 +205,12 @@ export default function AdminMentors({ dark }) {
                 </div>
               )}
 
-              <div style={{ display: "flex", gap: 10, marginTop: 12, flexWrap: "wrap" }}>
+              <div style={{ display: "flex", gap: 8, marginTop: 14, justifyContent: "flex-end" }}>
                 {mentor.status === "pending" && (
-                  <button onClick={() => approve(mentor.id)} style={{ flex: 1, minWidth: 100, background: "linear-gradient(135deg,#34d399,#10b981)", color: "#fff", border: "none", borderRadius: 10, padding: "10px", cursor: "pointer", fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 13 }}>✅ Approve</button>
+                  <button onClick={() => approve(mentor.id)} style={{ padding: "7px 18px", background: "linear-gradient(135deg,#34d399,#10b981)", color: "#fff", border: "none", borderRadius: 20, cursor: "pointer", fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 12 }}>✅ Approve</button>
                 )}
-                <button onClick={() => setConfirmId(mentor.id)} style={{ flex: 1, minWidth: 100, background: "rgba(239,68,68,0.1)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 10, padding: "10px", cursor: "pointer", fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 13 }}>
-                  🗑️ Remove Mentor
+                <button onClick={() => setConfirmId(mentor.id)} style={{ padding: "7px 18px", background: "transparent", color: "#ef4444", border: "1px solid rgba(239,68,68,0.4)", borderRadius: 20, cursor: "pointer", fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 12 }}>
+                  🗑️ Remove
                 </button>
               </div>
             </div>
