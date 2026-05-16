@@ -8,7 +8,7 @@ import { NotificationBell } from "./Notifications.jsx";
 import { WHATSAPP_LINK } from "../data/content.js";
 import GlobalSearch from "./GlobalSearch.jsx";
 
-export default function Navbar({ dark, setDark, user, visitorCount, isHost, onLogout, onShowVisitors, lang, notifications, unread, onMarkRead, adminBarOffset }) {
+export default function Navbar({ dark, setDark, user, visitorCount, isHost, onLogout, onShowVisitors, lang, notifications, unread, onMarkRead, adminBarOffset, onGoToProfile, onGoHome }) {
   const t = useTranslation(lang);
   const NAV_LINKS = [
     { key: "about",        label: t.nav.about,        href: "#about" },
@@ -130,6 +130,15 @@ export default function Navbar({ dark, setDark, user, visitorCount, isHost, onLo
                     </button>
                   </>
                 )}
+                {/* 👤 Profile button */}
+                <button
+                  onClick={onGoToProfile}
+                  style={{ display: "flex", alignItems: "center", gap: 6, background: dark ? "rgba(56,189,248,0.08)" : "rgba(56,189,248,0.07)", border: "1px solid rgba(56,189,248,0.25)", borderRadius: 20, padding: "7px 16px", cursor: "pointer", color: "#38bdf8", fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 13, transition: "all 0.2s" }}
+                  onMouseEnter={e => e.currentTarget.style.background = "rgba(56,189,248,0.18)"}
+                  onMouseLeave={e => e.currentTarget.style.background = dark ? "rgba(56,189,248,0.08)" : "rgba(56,189,248,0.07)"}
+                >
+                  👤 Profile
+                </button>
                 <button
                   onClick={onLogout}
                   style={{ background: "transparent", border: "1px solid rgba(56,189,248,0.35)", color: dark ? "#f8fafc" : "#0f172a", padding: "8px 20px", borderRadius: 20, fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "'Syne', sans-serif" }}
@@ -173,6 +182,11 @@ export default function Navbar({ dark, setDark, user, visitorCount, isHost, onLo
                 {link.label}
               </a>
             ))}
+            {user && (
+              <button onClick={() => { setMenuOpen(false); onGoToProfile?.(); }} style={{ background: "rgba(56,189,248,0.1)", border: "1px solid rgba(56,189,248,0.25)", color: "#38bdf8", padding: "10px 20px", borderRadius: 20, fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "'Syne', sans-serif", textAlign: "center" }}>
+                👤 My Profile
+              </button>
+            )}
             <a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" style={{ background: "linear-gradient(135deg,#38bdf8,#818cf8)", color: "#fff", padding: "10px 20px", borderRadius: 20, fontSize: 14, fontWeight: 600, textDecoration: "none", textAlign: "center", fontFamily: "'Syne', sans-serif" }}>
               Join Now
             </a>

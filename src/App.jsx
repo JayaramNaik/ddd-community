@@ -29,11 +29,12 @@ const EngineeringRoadmap = lazy(() => import("./components/EngineeringRoadmap.js
 const MedicalRoadmap     = lazy(() => import("./components/MedicalRoadmap.jsx"));
 const ExamsPage          = lazy(() => import("./components/ExamsPage.jsx"));
 const AdminDashboard     = lazy(() => import("./components/AdminDashboard.jsx"));
+const StudentProfile     = lazy(() => import("./components/StudentProfile.jsx"));
 
 export default function App() {
   const [dark, setDark]   = useState(true);
   const [lang, setLang]   = useState(null);
-  const [page, setPage]   = useState("home"); // "home" | "admin-dashboard"
+  const [page, setPage]   = useState("home"); // "home" | "admin-dashboard" | "profile"
 
   const [user, setUser] = useState(() => {
     try { return JSON.parse(sessionStorage.getItem("ddd-user")); }
@@ -91,11 +92,19 @@ export default function App() {
         if (isAdmin) setPage("admin-dashboard");
         else         window.location.hash = "";
       }
+      if (window.location.hash === "#profile") {
+        setPage("profile");
+      }
     };
     check();
     window.addEventListener("hashchange", check);
     return () => window.removeEventListener("hashchange", check);
   }, [isAdmin]);
+
+  const goToProfile = () => {
+    setPage("profile");
+    window.location.hash = "#profile";
+  };
 
   const goToDashboard = () => {
     if (!isAdmin) return;
@@ -128,6 +137,33 @@ export default function App() {
   // ── Language not selected ─────────────────────────────────
   if (!lang) {
     return <LanguageSelect dark={dark} onSelect={setLang} />;
+  }
+
+  // ── Student Profile page ─────────────────────────────────────
+  if (page === "profile") {
+    return (
+      <Suspense fallback={
+        <div style={{ minHeight: "100vh", background: dark ? "#040b1c" : "#f8fafc", display: "flex", alignItems: "center", justifyContent: "center", color: "#38bdf8", fontFamily: "'Syne',sans-serif", fontWeight: 700 }}>
+          Loading Profile...
+        </div>
+      }>
+        {isAdmin && <AdminBar onGoToDashboard={goToDashboard} />}
+        <div style={{ paddingTop: isAdmin ? 104 : 68 }}>
+          <Navbar
+            dark={dark} setDark={setDark} user={user}
+            visitorCount={visitorCount} isHost={isHost}
+            onLogout={handleLogout}
+            onShowVisitors={() => setShowVisitors(true)}
+            lang={lang} notifications={notifications}
+            unread={unread} onMarkRead={markAllRead}
+            adminBarOffset={isAdmin ? 36 : 0}
+            onGoToProfile={goToProfile}
+            onGoHome={goToHome}
+          />
+          <StudentProfile dark={dark} user={user} onBack={goToHome} />
+        </div>
+      </Suspense>
+    );
   }
 
   // ── Admin Dashboard page ──────────────────────────────────
@@ -175,6 +211,8 @@ export default function App() {
           unread={unread}
           onMarkRead={markAllRead}
           adminBarOffset={isAdmin ? 36 : 0}
+          onGoToProfile={goToProfile}
+          onGoHome={goToHome}
         />
 
         <Hero         dark={dark} lang={lang} />
