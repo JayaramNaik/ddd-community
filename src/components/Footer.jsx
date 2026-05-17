@@ -1,37 +1,35 @@
 // ─────────────────────────────────────────────────────────────
-//  src/components/Footer.jsx
+//  src/components/Footer.jsx  —  Saffron & Earth Theme
 // ─────────────────────────────────────────────────────────────
 
 import { WHATSAPP_LINK } from "../data/content.js";
 import { useTranslation } from "../data/translations.js";
 
 const FOOTER_LINKS = [
-  { heading: "Explore",    links: ["About Us", "Mentors", "Guidance Areas", "Scholarships"] },
-  { heading: "Community",  links: ["Join Us", "Discussion Rooms", "Ask Doubts", "Opportunities"] },
-  { heading: "Connect",    links: ["Instagram", "WhatsApp Community", "Telegram", "Email Us"] },
+  { heading: "Explore",   links: ["About Us", "Mentors", "Guidance Areas", "Scholarships"] },
+  { heading: "Community", links: ["Join Us", "Discussion Rooms", "Ask Doubts", "Opportunities"] },
+  { heading: "Connect",   links: ["Instagram", "WhatsApp Community", "Telegram", "Email Us"] },
 ];
 
 export default function Footer({ lang }) {
   const t = useTranslation(lang);
   return (
-    <footer style={{ background: "#020810", padding: "60px 2rem 32px", color: "#fff" }}>
+    <footer style={{ background: "#0f0700", padding: "60px 2rem 32px", color: "#fff" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 40, marginBottom: 48 }}>
 
           {/* Brand */}
           <div>
-            <div style={{ fontFamily: "'Playfair Display',serif", fontWeight: 900, fontSize: 24, background: "linear-gradient(135deg,#38bdf8,#818cf8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: 14 }}>
+            <div style={{ fontFamily: "'Playfair Display',serif", fontWeight: 900, fontSize: 24, background: "linear-gradient(135deg,#d97706,#f59e0b)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: 14 }}>
               D • D • D
             </div>
-            <p style={{ fontSize: 13, color: "#64748b", lineHeight: 1.7, fontFamily: "'Lora',serif" }}>
+            <p style={{ fontSize: 13, color: "#92683a", lineHeight: 1.7, fontFamily: "'Lora',serif" }}>
               {t.footer.desc}
             </p>
             <a
-              href={WHATSAPP_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ display: "inline-block", marginTop: 16, background: "linear-gradient(135deg,#38bdf8,#6366f1)", color: "#fff", padding: "8px 20px", borderRadius: 20, fontSize: 13, fontWeight: 600, textDecoration: "none", fontFamily: "'Syne',sans-serif" }}
+              href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer"
+              style={{ display: "inline-block", marginTop: 16, background: "linear-gradient(135deg,#d97706,#b45309)", color: "#fff", padding: "8px 20px", borderRadius: 20, fontSize: 13, fontWeight: 600, textDecoration: "none", fontFamily: "'Syne',sans-serif" }}
             >
               Join on WhatsApp 💬
             </a>
@@ -40,15 +38,14 @@ export default function Footer({ lang }) {
           {/* Link columns */}
           {FOOTER_LINKS.map(({ heading, links }) => (
             <div key={heading}>
-              <div style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 13, letterSpacing: "0.1em", textTransform: "uppercase", color: "#38bdf8", marginBottom: 16 }}>
+              <div style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 13, letterSpacing: "0.1em", textTransform: "uppercase", color: "#d97706", marginBottom: 16 }}>
                 {heading}
               </div>
               {links.map(link => (
-                <div
-                  key={link}
-                  style={{ fontSize: 13, color: "#64748b", marginBottom: 10, cursor: "pointer", fontFamily: "'Lora',serif", transition: "color 0.2s" }}
-                  onMouseEnter={e => e.target.style.color = "#e2e8f0"}
-                  onMouseLeave={e => e.target.style.color = "#64748b"}
+                <div key={link}
+                  style={{ fontSize: 13, color: "#92683a", marginBottom: 10, cursor: "pointer", fontFamily: "'Lora',serif", transition: "color 0.2s" }}
+                  onMouseEnter={e => e.target.style.color = "#f5e6c8"}
+                  onMouseLeave={e => e.target.style.color = "#92683a"}
                 >
                   {link}
                 </div>
@@ -58,12 +55,12 @@ export default function Footer({ lang }) {
         </div>
 
         {/* Bottom bar */}
-        <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: 28, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
-          <div style={{ fontFamily: "'Playfair Display',serif", fontStyle: "italic", fontSize: 16, color: "#475569" }}>
-            `"${t.footer.tagline}"`
+        <div style={{ borderTop: "1px solid rgba(217,119,6,0.15)", paddingTop: 28, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
+          <div style={{ fontFamily: "'Playfair Display',serif", fontStyle: "italic", fontSize: 16, color: "#4a3520" }}>
+            "{t.footer.tagline}"
           </div>
-          <div style={{ fontSize: 12, color: "#334155", fontFamily: "'Syne',sans-serif" }}>
-            {`© 2025 ${t.footer.tagline}. ${t.footer.rights}`}
+          <div style={{ fontSize: 12, color: "#4a3520", fontFamily: "'Syne',sans-serif" }}>
+            © 2025 {t.footer.tagline}. {t.footer.rights}
           </div>
         </div>
 

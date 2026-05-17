@@ -32,7 +32,7 @@ const AdminDashboard     = lazy(() => import("./components/AdminDashboard.jsx"))
 const StudentProfile     = lazy(() => import("./components/StudentProfile.jsx"));
 
 export default function App() {
-  const [dark, setDark]   = useState(true);
+  const [dark, setDark]   = useState(false);
   const [lang, setLang]   = useState(null);
   const [page, setPage]   = useState("home"); // "home" | "admin-dashboard" | "profile"
 
@@ -66,7 +66,7 @@ export default function App() {
 
   // ── Body background ───────────────────────────────────────
   useEffect(() => {
-    document.body.style.background = dark ? "#020818" : "#fff";
+    document.body.style.background = dark ? "#1a0e00" : "#fefce8";
     document.body.style.margin     = "0";
     document.body.style.padding    = "0";
   }, [dark]);
