@@ -35,6 +35,12 @@ export default function App() {
   const [dark, setDark]   = useState(false);
   const [lang, setLang]   = useState(null);
   const [page, setPage]   = useState("home"); // "home" | "admin-dashboard" | "profile"
+  // Save deep link hash so we can scroll to it after login + lang select
+  const [deepLink, setDeepLink] = useState(() => {
+    const hash = window.location.hash;
+    const pageHashes = ["#admin-dashboard", "#profile"];
+    return hash && !pageHashes.includes(hash) ? hash : "";
+  });
 
   const [user, setUser] = useState(() => {
     try { return JSON.parse(sessionStorage.getItem("ddd-user")); }
@@ -136,7 +142,17 @@ export default function App() {
 
   // ── Language not selected ─────────────────────────────────
   if (!lang) {
-    return <LanguageSelect dark={dark} onSelect={setLang} />;
+    return <LanguageSelect dark={dark} onSelect={(code) => {
+      setLang(code);
+      // After language select, scroll to saved deep link
+      if (deepLink) {
+        setTimeout(() => {
+          const el = document.querySelector(deepLink);
+          if (el) el.scrollIntoView({ behavior: "smooth" });
+          setDeepLink("");
+        }, 600);
+      }
+    }} />;
   }
 
   // ── Student Profile page ─────────────────────────────────────

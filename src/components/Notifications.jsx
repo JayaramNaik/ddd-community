@@ -5,6 +5,7 @@
 // ─────────────────────────────────────────────────────────────
 
 import { useState, useEffect } from "react";
+import { sendAnnouncementEmail } from "../utils/sendEmail.js";
 import { db } from "../config/firebase.js";
 import {
   collection, addDoc, getDocs, query, orderBy,
@@ -203,33 +204,75 @@ export function NotificationBell({ dark, user, unread, notifications, onMarkRead
 
 // ── Component: PostNotification (Admin + Mentor panel) ────────
 export function PostNotification({ dark, user }) {
-  const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ type: "announcement", title: "", message: "", link: "" });
-  const [status, setStatus] = useState("idle");
+  const [open, setOpen]           = useState(false);
+  const [form, setForm]           = useState({ type: "announcement", title: "", message: "", link: "" });
+  const [status, setStatus]       = useState("idle");
+  const [sendEmail, setSendEmail] = useState(false);
+  const [emailStatus, setEmailStatus] = useState(""); // e.g. "Emailed 12/15 users"
 
   const handle = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   const submit = async () => {
     if (!form.title.trim() || !form.message.trim()) return;
     setStatus("sending");
+    setEmailStatus("");
+
     try {
+      // 1. Save to Firestore (in-app notification)
       await addDoc(collection(db, "notifications"), {
         ...form,
-        postedBy: user?.contact || "admin",
+        postedBy:  user?.contact || "admin",
         createdAt: serverTimestamp(),
+        emailSent: sendEmail,
       });
 
-      // Try browser push notification
+      // 2. Browser push notification
       if ("Notification" in window && Notification.permission === "granted") {
-        new Notification(form.title, {
-          body: form.message,
-          icon: "/favicon.ico",
-        });
+        new Notification(form.title, { body: form.message, icon: "/favicon.ico" });
+      }
+
+      // 3. Send emails to all users if checked
+      if (sendEmail) {
+        setEmailStatus("Fetching users...");
+        try {
+          const snap   = await getDocs(collection(db, "users"));
+          const emails = snap.docs
+            .map(d => d.data().email)
+            .filter(Boolean);
+
+          let sent = 0;
+          let failed = 0;
+
+          for (const email of emails) {
+            try {
+              await sendAnnouncementEmail({
+                to_email: email,
+                title:    form.title,
+                message:  form.message,
+                link:     form.link || "https://jayaramnaik.github.io/ddd-community/",
+                type:     form.type,
+              });
+              sent++;
+              setEmailStatus(`Emailing users... ${sent}/${emails.length}`);
+              // Small delay to avoid rate limiting
+              await new Promise(r => setTimeout(r, 300));
+            } catch (err) {
+              console.warn(`Failed to email ${email}:`, err);
+              failed++;
+            }
+          }
+
+          setEmailStatus(`✅ Emailed ${sent} users${failed > 0 ? ` (${failed} failed)` : ""}`);
+        } catch (err) {
+          console.error("Failed to fetch users for email:", err);
+          setEmailStatus("⚠️ Could not fetch users for email");
+        }
       }
 
       setStatus("success");
       setForm({ type: "announcement", title: "", message: "", link: "" });
-      setTimeout(() => { setStatus("idle"); setOpen(false); }, 1500);
+      setSendEmail(false);
+      setTimeout(() => { setStatus("idle"); setOpen(false); setEmailStatus(""); }, 2500);
     } catch (err) {
       console.error(err);
       setStatus("error");
@@ -237,16 +280,12 @@ export function PostNotification({ dark, user }) {
   };
 
   const inputStyle = {
-    background: dark ? "rgba(255,255,255,0.05)" : "#f8fafc",
-    border: `1.5px solid ${dark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}`,
-    borderRadius: 10,
-    padding: "10px 14px",
-    width: "100%",
-    color: dark ? "#f1f5f9" : "#0f172a",
-    fontSize: 13,
-    fontFamily: "'Lora',serif",
-    outline: "none",
-    boxSizing: "border-box",
+    background:   dark ? "rgba(255,255,255,0.05)" : "#f8fafc",
+    border:       `1.5px solid ${dark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}`,
+    borderRadius: 10, padding: "10px 14px", width: "100%",
+    color:        dark ? "#f1f5f9" : "#0f172a",
+    fontSize:     13, fontFamily: "'Lora',serif",
+    outline:      "none", boxSizing: "border-box",
   };
 
   return (
@@ -255,14 +294,9 @@ export function PostNotification({ dark, user }) {
         onClick={() => setOpen(!open)}
         style={{
           background: "linear-gradient(135deg,#38bdf8,#818cf8)",
-          color: "#fff",
-          border: "none",
-          borderRadius: 12,
-          padding: "10px 20px",
-          cursor: "pointer",
-          fontFamily: "'Syne',sans-serif",
-          fontWeight: 700,
-          fontSize: 13,
+          color: "#fff", border: "none", borderRadius: 12,
+          padding: "10px 20px", cursor: "pointer",
+          fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 13,
         }}
       >
         📢 Post Notification
@@ -272,9 +306,8 @@ export function PostNotification({ dark, user }) {
         <div style={{
           marginTop: 16,
           background: dark ? "rgba(255,255,255,0.03)" : "#fff",
-          border: `1.5px solid ${dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}`,
-          borderRadius: 16,
-          padding: "24px",
+          border:     `1.5px solid ${dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}`,
+          borderRadius: 16, padding: "24px",
         }}>
           <h3 style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 15, color: dark ? "#f1f5f9" : "#0f172a", margin: "0 0 18px" }}>
             New Notification
@@ -283,48 +316,76 @@ export function PostNotification({ dark, user }) {
           {/* Type selector */}
           <div style={{ display: "flex", gap: 8, marginBottom: 14, flexWrap: "wrap" }}>
             {Object.entries(NOTIFICATION_TYPES).map(([key, val]) => (
-              <button
-                key={key}
-                onClick={() => handle("type", key)}
-                style={{
-                  background: form.type === key ? val.color : (dark ? "rgba(255,255,255,0.05)" : "#f1f5f9"),
-                  color: form.type === key ? "#fff" : (dark ? "#94a3b8" : "#64748b"),
-                  border: "none",
-                  borderRadius: 20,
-                  padding: "6px 14px",
-                  cursor: "pointer",
-                  fontFamily: "'Syne',sans-serif",
-                  fontWeight: 600,
-                  fontSize: 12,
-                }}
-              >
+              <button key={key} onClick={() => handle("type", key)} style={{
+                background:  form.type === key ? val.color : (dark ? "rgba(255,255,255,0.05)" : "#f1f5f9"),
+                color:       form.type === key ? "#fff" : (dark ? "#94a3b8" : "#64748b"),
+                border:      "none", borderRadius: 20, padding: "6px 14px",
+                cursor:      "pointer", fontFamily: "'Syne',sans-serif", fontWeight: 600, fontSize: 12,
+              }}>
                 {val.icon} {val.label}
               </button>
             ))}
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <input
-              type="text"
-              placeholder="Title *"
-              value={form.title}
-              onChange={e => handle("title", e.target.value)}
-              style={inputStyle}
-            />
-            <textarea
-              placeholder="Message *"
-              value={form.message}
+            <input type="text" placeholder="Title *" value={form.title}
+              onChange={e => handle("title", e.target.value)} style={inputStyle} />
+            <textarea placeholder="Message *" value={form.message}
               onChange={e => handle("message", e.target.value)}
-              style={{ ...inputStyle, minHeight: 80, resize: "vertical" }}
-            />
-            <input
-              type="url"
-              placeholder="Link (optional) — e.g. scholarship URL"
-              value={form.link}
-              onChange={e => handle("link", e.target.value)}
-              style={inputStyle}
-            />
+              style={{ ...inputStyle, minHeight: 80, resize: "vertical" }} />
+            <input type="url" placeholder="Link (optional) — e.g. scholarship URL"
+              value={form.link} onChange={e => handle("link", e.target.value)} style={inputStyle} />
           </div>
+
+          {/* ── Email toggle ── */}
+          <div
+            onClick={() => setSendEmail(!sendEmail)}
+            style={{
+              display: "flex", alignItems: "center", gap: 12,
+              marginTop: 16, padding: "14px 16px", borderRadius: 12, cursor: "pointer",
+              background: sendEmail
+                ? (dark ? "rgba(52,211,153,0.1)" : "rgba(52,211,153,0.08)")
+                : (dark ? "rgba(255,255,255,0.03)" : "#f8fafc"),
+              border: `1.5px solid ${sendEmail ? "rgba(52,211,153,0.4)" : (dark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.07)")}`,
+              transition: "all 0.2s",
+            }}
+          >
+            {/* Toggle switch */}
+            <div style={{
+              width: 44, height: 24, borderRadius: 12, flexShrink: 0,
+              background: sendEmail ? "#34d399" : (dark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.12)"),
+              position: "relative", transition: "background 0.3s",
+            }}>
+              <div style={{
+                position: "absolute", top: 3,
+                left: sendEmail ? 23 : 3,
+                width: 18, height: 18, borderRadius: "50%",
+                background: "#fff", transition: "left 0.3s",
+                boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
+              }} />
+            </div>
+            <div>
+              <div style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 13, color: sendEmail ? "#34d399" : (dark ? "#94a3b8" : "#64748b") }}>
+                📧 Also send email to all users
+              </div>
+              <div style={{ fontFamily: "'Lora',serif", fontSize: 11, color: dark ? "#475569" : "#94a3b8", marginTop: 2 }}>
+                {sendEmail
+                  ? "Will send this announcement to all registered emails"
+                  : "Only posts in-app notification (no email)"}
+              </div>
+            </div>
+          </div>
+
+          {/* Email send status */}
+          {emailStatus && (
+            <div style={{
+              marginTop: 10, padding: "10px 14px", borderRadius: 10,
+              background: "rgba(52,211,153,0.08)", border: "1px solid rgba(52,211,153,0.25)",
+              fontFamily: "'Syne',sans-serif", fontWeight: 600, fontSize: 12, color: "#34d399",
+            }}>
+              {emailStatus}
+            </div>
+          )}
 
           {status === "error" && (
             <p style={{ color: "#ef4444", fontSize: 12, fontFamily: "'Lora',serif", marginTop: 10 }}>
@@ -333,18 +394,24 @@ export function PostNotification({ dark, user }) {
           )}
 
           <div style={{ display: "flex", gap: 10, marginTop: 16 }}>
-            <button
-              onClick={() => setOpen(false)}
-              style={{ flex: 1, background: "transparent", border: `1px solid ${dark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}`, borderRadius: 10, padding: "10px", cursor: "pointer", fontFamily: "'Syne',sans-serif", fontWeight: 600, fontSize: 13, color: dark ? "#94a3b8" : "#64748b" }}
-            >
-              Cancel
-            </button>
-            <button
-              onClick={submit}
-              disabled={status === "sending"}
-              style={{ flex: 2, background: status === "success" ? "#34d399" : "linear-gradient(135deg,#38bdf8,#818cf8)", color: "#fff", border: "none", borderRadius: 10, padding: "10px", cursor: "pointer", fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 13 }}
-            >
-              {status === "sending" ? "Posting..." : status === "success" ? "✓ Posted!" : "Post Notification"}
+            <button onClick={() => setOpen(false)} style={{
+              flex: 1, background: "transparent",
+              border: `1px solid ${dark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}`,
+              borderRadius: 10, padding: "10px", cursor: "pointer",
+              fontFamily: "'Syne',sans-serif", fontWeight: 600, fontSize: 13,
+              color: dark ? "#94a3b8" : "#64748b",
+            }}>Cancel</button>
+            <button onClick={submit} disabled={status === "sending"} style={{
+              flex: 2,
+              background: status === "success" ? "#34d399" : "linear-gradient(135deg,#38bdf8,#818cf8)",
+              color: "#fff", border: "none", borderRadius: 10, padding: "10px",
+              cursor: status === "sending" ? "not-allowed" : "pointer",
+              fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 13,
+            }}>
+              {status === "sending"
+                ? (sendEmail ? "📧 Posting & emailing..." : "Posting...")
+                : status === "success" ? "✓ Done!"
+                : sendEmail ? "📢 Post + Email All" : "Post Notification"}
             </button>
           </div>
         </div>
@@ -352,6 +419,7 @@ export function PostNotification({ dark, user }) {
     </div>
   );
 }
+
 
 // ── Component: PushPermissionBanner ──────────────────────────
 export function PushPermissionBanner({ dark }) {
