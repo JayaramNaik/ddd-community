@@ -3,6 +3,7 @@
 // ─────────────────────────────────────────────────────────────
 
 import { FadeIn } from "../hooks/useInView.jsx";
+import ShareButton from "../components/ShareButton.jsx";
 
 const DOS   = [
   "Respectful and kind interaction at all times",
@@ -19,7 +20,8 @@ const DONTS = [
 
 export default function Guidelines({ dark }) {
   return (
-    <section id="guidelines" style={{ padding: "80px 2rem", background: dark ? "#040b1c" : "#fff" }}>
+    <section id="guidelines" style={{ padding: "80px 2rem", background: dark ? "#040b1c" : "#fff" , position: "relative"}}>
+        <ShareButton section="guidelines" label="Community Guidelines" dark={dark} />
       <div style={{ maxWidth: 900, margin: "0 auto" }}>
 
         <FadeIn>

@@ -3,6 +3,7 @@
 // ─────────────────────────────────────────────────────────────
 
 import { FadeIn } from "../hooks/useInView.jsx";
+import ShareButton from "../components/ShareButton.jsx";
 import { useTranslation } from "../data/translations.js";
 
 const VALUES = [
@@ -24,7 +25,8 @@ export default function About({ dark, lang }) {
   };
 
   return (
-    <section id="about" style={{ padding: "100px 2rem", background: dark ? "#140a00" : "#fffbeb" }}>
+    <section id="about" style={{ padding: "100px 2rem", background: dark ? "#140a00" : "#fffbeb" , position: "relative"}}>
+        <ShareButton section="about" label="About DDD Community" dark={dark} />
       <div style={{ maxWidth: 1100, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 48, alignItems: "center" }}>
 
         <FadeIn>

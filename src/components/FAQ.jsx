@@ -4,6 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 
 import { useState } from "react";
+import ShareButton from "../components/ShareButton.jsx";
 import { useTranslation } from "../data/translations.js";
 import { FadeIn } from "../hooks/useInView.jsx";
 import { FAQS } from "../data/content.js";
@@ -15,7 +16,8 @@ export default function FAQ({ dark, lang }) {
   const toggle = (i) => setOpenIndex(openIndex === i ? null : i);
 
   return (
-    <section id="faq" style={{ padding: "80px 2rem", background: dark ? "#040b1c" : "#fff" }}>
+    <section id="faq" style={{ padding: "80px 2rem", background: dark ? "#040b1c" : "#fff" , position: "relative"}}>
+        <ShareButton section="faq" label="FAQ" dark={dark} />
       <div style={{ maxWidth: 780, margin: "0 auto" }}>
 
         <FadeIn>

@@ -2,6 +2,7 @@
 //  src/components/WhatNext.jsx
 //  Main "What Next?" feature page
 //  Drop into your components folder and import in App.jsx
+import ShareButton from "../components/ShareButton.jsx";
 // ─────────────────────────────────────────────────────────────
 
 import { useState } from "react";

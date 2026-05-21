@@ -4,6 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 
 import { useState } from "react";
+import ShareButton from "../components/ShareButton.jsx";
 import { FadeIn } from "../hooks/useInView.jsx";
 import { useTranslation } from "../data/translations.js";
 
@@ -177,7 +178,8 @@ export default function EngineeringRoadmap({ dark, lang }) {
   ];
 
   return (
-    <section id="engineering" style={{ minHeight: "100vh", background: dark ? "#040b1c" : "#f8fafc", padding: "80px 2rem 120px" }}>
+    <section id="engineering" style={{ minHeight: "100vh", background: dark ? "#040b1c" : "#f8fafc", padding: "80px 2rem 120px" , position: "relative"}}>
+        <ShareButton section="engineering" label="Engineering Roadmap" dark={dark} />
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         {/* ── Hero ── */}

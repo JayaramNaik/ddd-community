@@ -4,6 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 
 import { FadeIn } from "../hooks/useInView.jsx";
+import ShareButton from "../components/ShareButton.jsx";
 import { useTranslation } from "../data/translations.js";
 import { SCHOLARSHIPS } from "../data/content.js";
 
@@ -16,7 +17,8 @@ export default function Scholarships({ dark, lang }) {
   };
 
   return (
-    <section id="scholarships" style={{ padding: "100px 2rem", background: dark ? "#040b1c" : "#fff" }}>
+    <section id="scholarships" style={{ padding: "100px 2rem", background: dark ? "#040b1c" : "#fff" , position: "relative"}}>
+        <ShareButton section="scholarships" label="Scholarships" dark={dark} />
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         <FadeIn>

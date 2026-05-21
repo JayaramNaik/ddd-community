@@ -4,6 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 
 import { useState } from "react";
+import ShareButton from "../components/ShareButton.jsx";
 import { FadeIn } from "../hooks/useInView.jsx";
 import { useTranslation } from "../data/translations.js";
 
@@ -201,7 +202,8 @@ export default function MedicalRoadmap({ dark, lang }) {
   ];
 
   return (
-    <section id="medical" style={{ minHeight: "100vh", background: dark ? "#040b1c" : "#f8fafc", padding: "80px 2rem 120px" }}>
+    <section id="medical" style={{ minHeight: "100vh", background: dark ? "#040b1c" : "#f8fafc", padding: "80px 2rem 120px" , position: "relative"}}>
+        <ShareButton section="medical" label="Medical Roadmap" dark={dark} />
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         {/* ── Hero ── */}

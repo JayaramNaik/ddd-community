@@ -4,6 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 
 import { useState } from "react";
+import ShareButton from "../components/ShareButton.jsx";
 import { FadeIn } from "../hooks/useInView.jsx";
 
 /* ── Responsive CSS ── */
@@ -123,7 +124,8 @@ export default function ExamsPage({ dark }) {
   });
 
   return (
-    <section id="exams" style={{ minHeight: "100vh", background: bg, padding: "72px 1.25rem 100px" }}>
+    <section id="exams" style={{ minHeight: "100vh", background: bg, padding: "72px 1.25rem 100px" , position: "relative"}}>
+        <ShareButton section="exams" label="Exams" dark={dark} />
       <style>{CSS}</style>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 

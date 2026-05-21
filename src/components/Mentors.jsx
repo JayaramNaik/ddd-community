@@ -4,6 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 
 import { useState, useEffect } from "react";
+import ShareButton from "../components/ShareButton.jsx";
 import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
 import { db } from "../config/firebase.js";
 import { FadeIn } from "../hooks/useInView.jsx";
@@ -34,7 +35,8 @@ export default function Mentors({ dark, lang }) {
   }, []);
 
   return (
-    <section id="mentors" style={{ padding: "100px 2rem", background: dark ? "#040b1c" : "#fff" }}>
+    <section id="mentors" style={{ padding: "100px 2rem", background: dark ? "#040b1c" : "#fff" , position: "relative"}}>
+        <ShareButton section="mentors" label="Mentors" dark={dark} />
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         <FadeIn>

@@ -4,13 +4,15 @@
 // ─────────────────────────────────────────────────────────────
 
 import { FadeIn } from "../hooks/useInView.jsx";
+import ShareButton from "../components/ShareButton.jsx";
 import { useTranslation } from "../data/translations.js";
 import { GUIDANCE_AREAS } from "../data/content.js";
 
 export default function Guidance({ dark, lang }) {
   const t = useTranslation(lang);
   return (
-    <section id="guidance" style={{ padding: "100px 2rem", background: dark ? "#060d1f" : "#f1f5f9" }}>
+    <section id="guidance" style={{ padding: "100px 2rem", background: dark ? "#060d1f" : "#f1f5f9" , position: "relative"}}>
+        <ShareButton section="guidance" label="Guidance Areas" dark={dark} />
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         <FadeIn>

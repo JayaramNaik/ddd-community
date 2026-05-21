@@ -6,6 +6,7 @@
 // ─────────────────────────────────────────────────────────────
 
 import { useState } from "react";
+import ShareButton from "../components/ShareButton.jsx";
 import { useTranslation } from "../data/translations.js";
 import { FadeIn } from "../hooks/useInView.jsx";
 import { sendJoinEmail } from "../utils/sendEmail.js";
@@ -48,7 +49,8 @@ export default function Contact({ dark, lang }) {
   };
 
   return (
-    <section id="contact" style={{ padding: "80px 2rem", background: dark ? "#060d1f" : "#f8fafc" }}>
+    <section id="contact" style={{ padding: "80px 2rem", background: dark ? "#060d1f" : "#f8fafc" , position: "relative"}}>
+        <ShareButton section="contact" label="Join the Movement" dark={dark} />
       <div style={{ maxWidth: 580, margin: "0 auto" }}>
 
         <FadeIn>
