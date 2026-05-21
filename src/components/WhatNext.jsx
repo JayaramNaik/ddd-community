@@ -49,8 +49,10 @@ export default function WhatNext({ dark }) {
         minHeight: "100vh",
         background: dark ? "#040b1c" : "#f8fafc",
         padding: "80px 2rem 120px",
+        position: "relative",
       }}
     >
+      <ShareButton section="whatnext" label="What Next?" dark={dark} />
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         {/* ── Landing Hero ── */}

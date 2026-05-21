@@ -108,32 +108,30 @@ export default function ShareButton({ section, label, dark }) {
         style={{
           display:        "flex",
           alignItems:     "center",
-          gap:            6,
-          background:     dark ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.9)",
-          border:         `1px solid ${dark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.1)"}`,
-          borderRadius:   40,
-          padding:        "8px 16px",
+          gap:            8,
+          background:     dark ? "linear-gradient(135deg, rgba(56,189,248,0.18), rgba(129,140,248,0.18))" : "linear-gradient(135deg, #38bdf8, #818cf8)",
+          border:         "none",
+          borderRadius:   44,
+          padding:        "10px 18px",
           cursor:         "pointer",
-          color:          dark ? "#94a3b8" : "#64748b",
+          color:          dark ? "#f8fafc" : "#fff",
           fontFamily:     "'Syne',sans-serif",
-          fontWeight:     700,
+          fontWeight:     800,
           fontSize:       12,
-          backdropFilter: "blur(8px)",
-          boxShadow:      dark ? "0 4px 16px rgba(0,0,0,0.3)" : "0 4px 16px rgba(0,0,0,0.08)",
-          transition:     "all 0.2s",
-          letterSpacing:  "0.03em",
+          backdropFilter: "blur(10px)",
+          boxShadow:      dark ? "0 14px 40px rgba(56,189,248,0.22)" : "0 14px 40px rgba(56,189,248,0.24)",
+          transition:     "all 0.2s ease",
+          letterSpacing:  "0.04em",
         }}
         onMouseEnter={e => {
-          e.currentTarget.style.background    = dark ? "rgba(255,255,255,0.14)" : "#fff";
-          e.currentTarget.style.borderColor   = "#d97706";
-          e.currentTarget.style.color         = "#d97706";
-          e.currentTarget.style.boxShadow     = "0 4px 20px rgba(217,119,6,0.2)";
+          e.currentTarget.style.background    = dark ? "linear-gradient(135deg, rgba(56,189,248,0.28), rgba(129,140,248,0.28))" : "linear-gradient(135deg, #60a5fa, #a78bfa)";
+          e.currentTarget.style.boxShadow     = "0 16px 46px rgba(56,189,248,0.28)";
+          e.currentTarget.style.transform     = "translateY(-1px)";
         }}
         onMouseLeave={e => {
-          e.currentTarget.style.background    = dark ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.9)";
-          e.currentTarget.style.borderColor   = dark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.1)";
-          e.currentTarget.style.color         = dark ? "#94a3b8" : "#64748b";
-          e.currentTarget.style.boxShadow     = dark ? "0 4px 16px rgba(0,0,0,0.3)" : "0 4px 16px rgba(0,0,0,0.08)";
+          e.currentTarget.style.background    = dark ? "linear-gradient(135deg, rgba(56,189,248,0.18), rgba(129,140,248,0.18))" : "linear-gradient(135deg, #38bdf8, #818cf8)";
+          e.currentTarget.style.boxShadow     = dark ? "0 14px 40px rgba(56,189,248,0.22)" : "0 14px 40px rgba(56,189,248,0.24)";
+          e.currentTarget.style.transform     = "translateY(0)";
         }}
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
