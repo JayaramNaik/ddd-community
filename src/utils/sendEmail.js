@@ -7,6 +7,7 @@ import {
   EMAILJS_SERVICE_ID,
   EMAILJS_TEMPLATE_ID,
   EMAILJS_OTP_TEMPLATE_ID,
+  EMAILJS_ANNOUNCEMENT_TEMPLATE_ID,
   EMAILJS_PUBLIC_KEY,
 } from "../config/emailjs.js";
 
@@ -51,6 +52,11 @@ export async function sendOtpEmail(email, code) {
       user_id:     EMAILJS_PUBLIC_KEY,
       template_params: {
         to_email: email,
+        subject:  "Your DDD Community OTP",
+        title:    "Login OTP",
+        subtitle: "Use the code below to sign in to DDD Community.",
+        icon:     "🔐",
+        message:  `Use ${code} to sign in. This code is valid for 5 minutes.`,
         otp_code: code,
         time:     new Date().toLocaleString("en-IN"),
       },
@@ -63,18 +69,26 @@ export async function sendOtpEmail(email, code) {
 //  Visitor notification — notifies admin
 // ─────────────────────────────────────────────────────────────
 export async function sendVisitorNotification(visitor) {
+  const notificationTemplateId = EMAILJS_ANNOUNCEMENT_TEMPLATE_ID && EMAILJS_ANNOUNCEMENT_TEMPLATE_ID !== "your_template_id_here"
+    ? EMAILJS_ANNOUNCEMENT_TEMPLATE_ID
+    : EMAILJS_TEMPLATE_ID;
+
   const response = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       service_id:  EMAILJS_SERVICE_ID,
-      template_id: EMAILJS_TEMPLATE_ID,
+      template_id: notificationTemplateId,
       user_id:     EMAILJS_PUBLIC_KEY,
       template_params: {
-        name:    visitor.displayName,
-        message: `New visitor signed in:\n\nName: ${visitor.displayName}\nContact: ${visitor.contact}\nMethod: ${visitor.method}\nTime: ${visitor.time}`,
-        time:    visitor.time,
-        email:   visitor.contact,
+        subject:  "New visitor notification",
+        title:    "New visitor signed in",
+        subtitle: "A visitor has signed in to DDD Community.",
+        icon:      "👤",
+        name:      visitor.displayName,
+        message:   `New visitor signed in:\n\nName: ${visitor.displayName}\nContact: ${visitor.contact}\nMethod: ${visitor.method}\nTime: ${visitor.time}`,
+        time:      visitor.time,
+        email:     visitor.contact,
       },
     }),
   });
@@ -82,8 +96,8 @@ export async function sendVisitorNotification(visitor) {
 }
 
 // ─────────────────────────────────────────────────────────────
-//  Announcement email — sends to a single user via OTP template
-//  Uses OTP template with otp_code field for the message content
+//  Announcement email — sends to a single user via a dedicated announcement template
+//  Falls back to the OTP template only when announcement template is not configured
 //  Call this in a loop for each registered user
 // ─────────────────────────────────────────────────────────────
 export async function sendAnnouncementEmail(data) {
@@ -95,10 +109,11 @@ export async function sendAnnouncementEmail(data) {
     mentor:       "🎓",
   }[data.type] || "📢";
 
-  // We reuse the OTP template but pass announcement content
-  // Make sure your OTP template has {{to_email}} as recipient
-  // and shows {{otp_code}} somewhere in the body
-  // We put the full announcement in otp_code field
+  const announcementTemplateId = EMAILJS_ANNOUNCEMENT_TEMPLATE_ID && EMAILJS_ANNOUNCEMENT_TEMPLATE_ID !== "your_template_id_here"
+    ? EMAILJS_ANNOUNCEMENT_TEMPLATE_ID
+    : null;
+
+  const templateId = announcementTemplateId || EMAILJS_TEMPLATE_ID;
   const messageContent = `
 ${typeEmoji} ${data.title}
 
@@ -110,18 +125,30 @@ ${data.link ? `🔗 Link: ${data.link}` : `🌐 Visit: ${SITE_URL}`}
 Dream • Decide • Dominate
   `.trim();
 
+  const templateParams = {
+    to_email: data.to_email,
+    subject:  `${typeEmoji} ${data.title}`,
+    title:    data.title,
+    subtitle: `You have a new ${data.type} from DDD Community.`,
+    icon:     typeEmoji,
+    message:  data.message,
+    link:     data.link || SITE_URL,
+    time:     new Date().toLocaleString("en-IN"),
+  };
+
+  if (!announcementTemplateId) {
+    // Fallback to generic / OTP-style template fields when no dedicated announcement template is configured
+    templateParams.otp_code = messageContent;
+  }
+
   const response = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       service_id:  EMAILJS_SERVICE_ID,
-      template_id: EMAILJS_OTP_TEMPLATE_ID,
+      template_id: templateId,
       user_id:     EMAILJS_PUBLIC_KEY,
-      template_params: {
-        to_email: data.to_email,
-        otp_code: messageContent,
-        time:     new Date().toLocaleString("en-IN"),
-      },
+      template_params: templateParams,
     }),
   });
 
