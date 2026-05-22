@@ -14,4 +14,4 @@ export const RECEIVER_EMAIL          = "dddcommunity123@gmail.com";
 // Create at emailjs.com → Email Templates → New Template
 // Set To Email: {{to_email}}  |  Subject: {{subject}}  |  Body: {{message}}
 // Then paste the template ID below:
-export const EMAILJS_ANNOUNCEMENT_TEMPLATE_ID = "your_announcement_template_id";
+export const EMAILJS_ANNOUNCEMENT_TEMPLATE_ID = "template_ak1yf8f";
