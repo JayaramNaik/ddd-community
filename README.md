@@ -92,3 +92,4 @@ Recommended: **Vercel** (free)
 1. Push to GitHub
 2. Connect repo on vercel.com
 3. Deploy — done!
+trigger
