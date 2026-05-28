@@ -5,7 +5,8 @@
 import { useState } from "react";
 import { sendOtpEmail, sendVisitorNotification } from "../utils/sendEmail.js";
 import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "../config/firebase.js";
+import { auth, db } from "../config/firebase.js";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { RECEIVER_EMAIL } from "../config/emailjs.js";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -14,21 +15,55 @@ export default function Login({ onLogin, dark }) {
   const [contact, setContact]           = useState("");
   const [otp, setOtp]                   = useState("");
   const [generatedOtp, setGeneratedOtp] = useState(null);
+  const [password, setPassword]         = useState("");
   const [step, setStep]                 = useState("input");
   const [status, setStatus]             = useState("");
   const [error, setError]               = useState("");
   const [isSending, setIsSending]       = useState(false);
+  const isAdminEmail = contact.trim().toLowerCase() === RECEIVER_EMAIL.toLowerCase();
 
   const sendOtp = async () => {
     setError("");
     if (!emailRegex.test(contact.trim())) { setError("Please enter a valid email address."); return; }
+    const email = contact.trim();
+    const docId = email.replace(/\./g, "_");
+    const isAdmin = isAdminEmail;
+
+    if (isAdmin) {
+      if (!password.trim()) { setError("Enter the admin password."); return; }
+      setIsSending(true);
+      setStatus("Signing in admin...");
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        const ref = doc(db, "users", docId);
+        const snapshot = await getDoc(ref);
+        if (!snapshot.exists()) {
+          await setDoc(ref, { email, role: "admin", banned: false, createdAt: serverTimestamp(), lastLogin: serverTimestamp() });
+        } else {
+          const data = snapshot.data();
+          if (data.banned) { setError("Your account has been suspended. Please contact the admin."); return; }
+          await setDoc(ref, { lastLogin: serverTimestamp() }, { merge: true });
+        }
+        const visitor = { contact: email, method: "Admin login", displayName: email, time: new Date().toLocaleString("en-IN"), role: "admin" };
+        try { await sendVisitorNotification(visitor); } catch (err) { console.warn(err); }
+        onLogin(visitor);
+        return;
+      } catch (err) {
+        console.error("Admin sign-in failed:", err);
+        setError("Admin sign-in failed. Check email/password.");
+      } finally {
+        setIsSending(false);
+      }
+      return;
+    }
+
     const code = String(Math.floor(100000 + Math.random() * 900000));
     setIsSending(true); setStatus("Sending OTP to your inbox...");
     try {
-      await sendOtpEmail(contact.trim(), code);
+      await sendOtpEmail(email, code);
       setGeneratedOtp({ code, timestamp: Date.now() });
       setStep("verify");
-      setStatus(`OTP sent to ${contact.trim()}. Check your inbox within 5 minutes.`);
+      setStatus(`OTP sent to ${email}. Check your inbox within 5 minutes.`);
     } catch (err) {
       console.error(err); setError("Unable to send OTP. Please try again later.");
     } finally { setIsSending(false); }
@@ -97,6 +132,17 @@ export default function Login({ onLogin, dark }) {
           style={{ width: "100%", padding: "13px 16px", borderRadius: 14, border: `1.5px solid ${step === "verify" ? "rgba(217,119,6,0.4)" : "rgba(217,119,6,0.25)"}`, background: dark ? "rgba(217,119,6,0.05)" : "rgba(255,251,235,0.8)", color: dark ? "#f5e6c8" : "#78350f", marginBottom: 18, fontSize: 14, fontFamily: "'Lora',serif", outline: "none", boxSizing: "border-box", opacity: step === "verify" ? 0.7 : 1 }}
         />
 
+        {isAdminEmail && step === "input" && (
+          <>
+            <label style={{ display: "block", marginBottom: 8, color: dark ? "#92683a" : "#92400e", fontSize: 13, fontWeight: 700, fontFamily: "'Syne',sans-serif" }}>🔒 Admin Password</label>
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && sendOtp()}
+              placeholder="Enter admin password"
+              style={{ width: "100%", padding: "13px 16px", borderRadius: 14, border: "1.5px solid rgba(217,119,6,0.25)", background: dark ? "rgba(217,119,6,0.05)" : "rgba(255,251,235,0.8)", color: dark ? "#f5e6c8" : "#78350f", marginBottom: 18, fontSize: 14, fontFamily: "'Lora',serif", outline: "none", boxSizing: "border-box" }}
+            />
+          </>
+        )}
+
         {step === "verify" && (
           <>
             <label style={{ display: "block", marginBottom: 8, color: dark ? "#92683a" : "#92400e", fontSize: 13, fontWeight: 700, fontFamily: "'Syne',sans-serif" }}>🔐 Enter OTP</label>
@@ -117,7 +163,10 @@ export default function Login({ onLogin, dark }) {
           onMouseEnter={e => { if (!(step === "input" && isSending)) e.currentTarget.style.opacity = "0.9"; }}
           onMouseLeave={e => { e.currentTarget.style.opacity = "1"; }}
         >
-          {step === "input" ? (isSending ? "⏳ Sending OTP..." : "Send OTP →") : "✓ Verify & Sign In"}
+          {step === "input"
+            ? (isAdminEmail ? (isSending ? "⏳ Signing in..." : "Admin Sign In") : (isSending ? "⏳ Sending OTP..." : "Send OTP →"))
+            : "✓ Verify & Sign In"
+          }
         </button>
 
         {step === "verify" && (

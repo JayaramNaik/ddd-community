@@ -6,7 +6,7 @@
 
 import { useState, useEffect } from "react";
 import {
-  collection, getDocs, doc, updateDoc, deleteDoc, setDoc, serverTimestamp
+  collection, getDocs, getDoc, doc, updateDoc, deleteDoc, setDoc, serverTimestamp
 } from "firebase/firestore";
 import { db } from "../config/firebase.js";
 
@@ -71,9 +71,10 @@ export default function AdminDashboard({ dark, user, onBack, visitorLog }) {
     siteTagline: "Dream • Decide • Dominate",
   });
 
-  // ── Load users from Firestore ──
+  // ── Load users + site settings from Firestore ──
   useEffect(() => {
     fetchUsers();
+    loadSiteSettings();
   }, []);
 
   const fetchUsers = async () => {
@@ -87,6 +88,32 @@ export default function AdminDashboard({ dark, user, onBack, visitorLog }) {
       showToast("❌ Failed to load users");
     }
     setLoading(false);
+  };
+
+  const loadSiteSettings = async () => {
+    try {
+      const ref = doc(db, "app-settings", "global");
+      const snapshot = await getDoc(ref);
+      if (snapshot.exists()) {
+        setSiteSettings(snapshot.data());
+      }
+    } catch (err) {
+      console.error("Error loading site settings:", err);
+      showToast("❌ Failed to load settings");
+    }
+  };
+
+  const saveSiteSettings = async () => {
+    try {
+      await setDoc(doc(db, "app-settings", "global"), {
+        ...siteSettings,
+        updatedAt: serverTimestamp(),
+      }, { merge: true });
+      showToast("✅ Settings saved");
+    } catch (err) {
+      console.error("Error saving site settings:", err);
+      showToast(`❌ Save failed: ${err.code || err.message || "unknown"}`);
+    }
   };
 
   const showToast = (msg) => {
@@ -482,7 +509,7 @@ export default function AdminDashboard({ dark, user, onBack, visitorLog }) {
 
               {/* Save button */}
               <button
-                onClick={() => showToast("✅ Settings saved (UI only — wire to Firestore if needed)")}
+                onClick={saveSiteSettings}
                 style={{
                   padding: "13px 24px", borderRadius: 14, border: "none",
                   background: "linear-gradient(135deg,#38bdf8,#818cf8)",

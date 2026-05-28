@@ -6,6 +6,8 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 import { useNotifications, PushPermissionBanner, PostNotification } from "./components/Notifications.jsx";
 import { RECEIVER_EMAIL } from "./config/emailjs.js";
+import { getDoc, doc } from "firebase/firestore";
+import { db } from "./config/firebase.js";
 
 import Navbar         from "./components/Navbar.jsx";
 import Login          from "./components/Login.jsx";
@@ -53,6 +55,12 @@ export default function App() {
   });
 
   const [showVisitors, setShowVisitors] = useState(false);
+  const [appSettings, setAppSettings] = useState({
+    maintenanceMode: false,
+    allowNewUsers: true,
+    siteTagline: "Dream • Decide • Dominate",
+  });
+  const [settingsLoading, setSettingsLoading] = useState(true);
 
   const visitorCount = visitorLog.length;
   const { notifications, unread, markAllRead } = useNotifications();
@@ -76,6 +84,25 @@ export default function App() {
     document.body.style.margin     = "0";
     document.body.style.padding    = "0";
   }, [dark]);
+
+  // ── Load app settings from Firestore ────────────────────────
+  useEffect(() => {
+    const loadAppSettings = async () => {
+      setSettingsLoading(true);
+      try {
+        const ref = doc(db, "app-settings", "global");
+        const snapshot = await getDoc(ref);
+        if (snapshot.exists()) {
+          setAppSettings(prev => ({ ...prev, ...snapshot.data() }));
+        }
+      } catch (err) {
+        console.error("Failed to load app settings:", err);
+      } finally {
+        setSettingsLoading(false);
+      }
+    };
+    loadAppSettings();
+  }, []);
 
   // ── Google Fonts ──────────────────────────────────────────
   useEffect(() => {
@@ -230,6 +257,27 @@ export default function App() {
           onGoToProfile={goToProfile}
           onGoHome={goToHome}
         />
+
+        {appSettings.maintenanceMode && !isAdmin && (
+          <div style={{
+            maxWidth: 940,
+            margin: "24px auto",
+            padding: "18px 20px",
+            borderRadius: 18,
+            border: "1px solid #fca5a5",
+            background: dark ? "rgba(254,202,202,0.12)" : "#fef2f2",
+            color: dark ? "#fee2e2" : "#991b1b",
+            fontFamily: "'Lora',serif",
+            boxShadow: dark ? "0 20px 60px rgba(255,182,193,0.12)" : "0 20px 60px rgba(248,113,113,0.12)",
+          }}>
+            <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 6 }}>
+              🚧 Maintenance mode is ON
+            </div>
+            <p style={{ margin: 0, lineHeight: 1.7, color: dark ? "#fee2e2" : "#7f1d1d" }}>
+              The site is currently under maintenance for regular users. Admins can still access the dashboard and manage content.
+            </p>
+          </div>
+        )}
 
         <Hero         dark={dark} lang={lang} />
         <About        dark={dark} lang={lang} />
